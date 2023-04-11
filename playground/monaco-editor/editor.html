@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	</head>
+	<body>
+		<script>
+			window.MonacoIsReady = monaco => {
+
+				monaco.editor.defineTheme('i-theme', {
+					base: 'vs-dark',
+					inherit: true,
+					rules: [
+						{ token: 'global', foreground: 'FF00FF', fontStyle: "bold" },
+						{ token: 'keyword', foreground: 'ff6a00', fontStyle: "bold" },
+						{ token: 'comment', foreground: '666666' },
+						{ token: 'number', foreground: 'ffc600' },
+						{ token: 'string', foreground: 'a1c808' },
+						{ token: 'type', fontStyle: 'italic' },
+						{ token: 'type.identifier', foreground: 'ff0000' },
+				//		  { token: 'identifier', foreground: 'ff0000' },
+					],
+					colors: {
+						'editorCursor.foreground': '#ffff00',
+				//		  'editor.lineHighlightBackground': '#0000FF20',
+				//		  'editorLineNumber.foreground': '#008800',
+				//		  'editor.selectionBackground': '#88000030',
+				//		  'editor.inactiveSelectionBackground': '#88000015'
+					}
+				});
+				monaco.editor.setTheme('myTheme');
+
+				monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+					noSemanticValidation: true,
+					noSyntaxValidation: true,
+				});
+
+				const Editor = monaco.editor.create(document.getElementById('root'), {
+					value: '',
+					language: 'javascript',
+					fontSize: "10px",
+					theme: "i-theme",
+
+					roundedSelection: false,
+					scrollBeyondLastLine: false,
+					acceptSuggestionOnEnter: "off",
+					suggestOnTriggerCharacters: false,
+					//suggestSelection: "recentlyUsed",
+					folding: true,
+					wordBasedSuggestions: false,
+					quickSuggestions: false,
+					tabCompletion: "off",
+					scrollbar: {
+						verticalHasArrows: true,
+					},
+					dragAndDrop: true,
+					links: true,
+					minimap: {
+						enabled: true,
+					},
+					showFoldingControls: "always",
+					scrollBeyondLastLine: false,
+					smoothScrolling: true,
+					lineNumbers: 'off',
+ 					glyphMargin: false,
+				});
+
+				window.onresize = () => Editor.layout();
+
+				Editor.onDidChangeModelContent(() =>
+					window.parent.document.dispatchEvent(
+						new CustomEvent('monaco-editor-'+window.name, {
+							detail: Editor.getValue()
+						})
+					)
+				);
+
+				window.document.addEventListener('setValue', event => Editor.setValue(String(event.detail)));
+
+				window.parent.document.dispatchEvent(
+					new CustomEvent('monaco-editor-ready-'+window.name, {
+						detail: {}
+					})
+				)
+			}
+		</script>
+		<script src="main.bundle.js"></script>
+	</body>
+</html>
