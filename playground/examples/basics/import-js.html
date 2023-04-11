@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/dist/i.js"></script>
+</head>
+<body>
+    <script type=i>
+        <!import { Add, Num } from example.js>
+        <!import * as myModule from example.js>
+        <!import Sub from example2.js>
+
+        <h1 text(Num)/>
+
+        3 + 9 = <b text( Add(3,9) )/><br>
+        13 + 9 = <b text( myModule.Add(13,9) )/><br>
+        3 - 9 = <b text( Sub(3,9) )/>
+
+        <!class>
+            connected() {
+                alert('Hello from class! 2+7=' + Add(2,7));
+            }
+
+        <!static>
+
+            alert('Hello from static block! 2-7=' + Sub(2,7));
+
+    </script>
+</body>
+</html>

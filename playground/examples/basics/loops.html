@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/dist/i.js"></script>
+</head>
+<body>
+    <script type=i>
+        <button @click({
+            var words = Object.keys(window);
+            state.todos.push({
+                id: Math.random(),
+                name: words[Math.floor(Math.random() * words.length)]
+            });
+        })>Add</button>
+        <button @click({ state.todos = [] })>Clear</button>
+
+        <ul>
+            <li loop(state.todos as todo | key => key.id) text(todo.name)/>
+        </ul>
+
+
+        <!state>
+         todos: [
+             { id:1, name: 'Todo 1'},
+             { id:2, name: 'Todo 2'},
+             { id:3, name: 'Todo 3'},
+             { id:4, name: 'Todo 4'},
+             { id:5, name: 'Todo 5'},
+         ]
+    </script>
+</body>
+</html>

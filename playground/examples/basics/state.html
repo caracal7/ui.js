@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/dist/i.js"></script>
+</head>
+<body>
+    <script type=i>
+        <h1 text(state.x)/>
+
+        <button @click({
+            alert(state.message);
+            state.x = Math.random();
+        })>Click me!</button>
+
+        <!state>
+            message: 'This is message',
+            x: 123
+    </script>
+</body>
+</html>

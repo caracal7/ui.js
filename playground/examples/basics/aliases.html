@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/dist/i.js"></script>
+</head>
+<body>
+    <script type=i>
+        <!tag @colored colored.tag>
+
+        <@colored color=state.color></@colored>
+
+        <button @click({
+            state.color = "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
+        })>Click me!</button>
+
+        <!state>
+            color: '...'
+    </script>
+</body>
+</html>
