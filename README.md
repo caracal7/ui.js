@@ -1,9 +1,5 @@
-# i.js
+
 Modern, concise, developer-friendly &amp; zero-config DSL for creating user interfaces.
-
-
-![Virtual DOM and d3.js like ENTER/EXIT/UPDATE pattern together](/letters.gif)
-
 
 # Philosophy and Zen of <b style="color:#42a425">i.js</b>
 
@@ -402,25 +398,27 @@ export default Sub;
 </html>
 ```
 
-# Key similarities and differences
+# Comparison with others
 
-## i.js template and HTML
+## Key differences
 
-- Undocumented yet
-
-## i.js and React
+### i.js template and HTML
 
 - Undocumented yet
 
-## i.js and Vue 3.x
+### i.js and React
 
 - Undocumented yet
 
-## i.js and Svelte
+### i.js and Vue 3.x
 
 - Undocumented yet
 
-## i.js and d3.js
+### i.js and Svelte
+
+- Undocumented yet
+
+### i.js and d3.js
 
 - Undocumented yet
 
@@ -758,5 +756,3 @@ Special thanks to these wonderful projects
 ## Licence
 
 MIT
-
-## The End
