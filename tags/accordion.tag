@@ -95,5 +95,4 @@
         height: 100%;
         overflow-y: auto;
         flex-grow: 0;
-        transition: all 0.25s linear;
     }
