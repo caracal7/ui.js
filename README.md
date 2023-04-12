@@ -1,6 +1,94 @@
 
 Modern, concise, developer-friendly &amp; zero-config DSL for creating user interfaces.
 
+# Why?
+
+## 10 LOC "To Do list"
+
+<to-do></to-do>
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="i.js"></script>
+</head>
+<body>
+    <script type=i> <!----------------------------------->
+        <input %value=state.default>
+        <button @click({ state.todos.push({ name: state.default }) })>Add</button>
+        <button @click({ state.todos = state.todos.filter(t => !t.done) })>Remove completed</button>
+        <div loop(state.todos as todo | k=>k)>
+            <input type="checkbox" %checked=todo.done>
+            <input %value=todo.name>
+        </div>
+        <!state>
+            default: 'Make the best UI DSL',
+            todos: []
+    </script> <!----------------------------------->
+</body>
+</html>
+```
+
+## D3.js-like Enter/Exit/Update pattern out of the box
+
+<my-letters></my-letters>
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="i.js"></script>
+</head>
+<body>
+    <script type=i>
+        <svg attrs(width: 400, height: 300)>
+            <g loop(new Array(1).fill(0) as X, ind | d => d) attrs(transform: `translate(5, ${40+40*ind})`)>
+                <text loop(state.alphabet as letter, i | d => d) text(letter)
+                    enter(font: 'bold 24px monospace', fill: { to: '#FF0000', duration: 1500 })
+                    update(fill: { to: '#0088FF'})
+                    exit(fill: { to: '#CCCCCC', duration: 1000 })
+                    #enter(
+                        x: { to: (i * 15), ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+                        y: { to: 50, ease: 'easeInOutQuint', duration: 1300 + i * 30 }
+                    )
+                    #update(x: { to: i * 15 }, y: { to: 50 })
+                    #exit(y: { to: 250, duration: 3000 + Math.random()*2000, ease: 'easeOutBounce' })/>
+            </g>
+        </svg>
+
+        <!state>
+            alphabet: []
+
+        <!static>
+            var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+        <!class>
+            connected() {
+                this.state.alphabet = alphabet;
+                this.render();
+                setInterval(() => {
+                    this.state.alphabet = shuffleArray(alphabet)
+                        .slice(0, Math.floor(Math.random() * 26))
+                        .sort();
+                    this.render();
+                }, 2000);
+            }
+    </script>
+</body>
+</html>
+```
+
 # Philosophy and Zen of <b style="color:#42a425">i.js</b>
 
 - **Develop faster**. No dev server, no bundler, no toolchain, no bootstrap template. Starts up in 0 ms 🔥

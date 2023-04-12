@@ -10,7 +10,7 @@
             <ul if(category.caption === state.category)>
                 <li loop(category.examples as example | d => d.caption) text(example.caption)
                     class=(state.example === example.caption && 'active')
-                    enter('padding-left': { to: '50px', ease: 'easeOutBounce' })
+                    enter('padding-left': { to: '30px', ease: 'easeOutBounce' })
                     @click({
                         state.example = example.caption;
                         this.emitNative('select', {
@@ -51,16 +51,18 @@
         user-select: none;
         -webkit-user-select: none;
         overflow-y: auto;
+
     }
 
     ul {
         margin: 0;
         padding: 0;
+
     }
 
     li {
-
-        margin-left: 0;
+        padding: 0 15px;
+        margin-left: 0px;
         cursor: pointer;
         list-style-type: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -72,7 +74,7 @@
     }
 
     aside > ul > li > ul > li {
-        padding-left: 30px;
+        padding-left: 10px;
         padding-top: 10px;
         padding-bottom: 10px;
         border-bottom: none;
