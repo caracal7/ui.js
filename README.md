@@ -109,7 +109,7 @@ All you need is **i.js** and a modern browser with <a href="https://developer
 
 # Getting started
 
-> **i.js** at moment is a **Proof of Concept** and in the process of being rewritten to the new DSL syntax and will be moved to new renderer. Many functions are not yet ported over from the previous version.
+> **i.js** at moment is a **Proof of Concept** and in the process of being rewritten to the current DSL syntax and will be moved to new renderer. Many functions are not yet ported over from the previous version.
 
 **<b style="color:red">Do not use</b> in production until v.0.7 will be released**
 
@@ -119,7 +119,7 @@ All you need is **i.js** and a modern browser with <a href="https://developer
 - [i.esm.js](/dist/i.esm.js) - ES module
 - [i.cjs.js](/dist/i.cjs.js) - CommonJS
 
-## Hello wold
+## Hello world
 ```html
 <!DOCTYPE html>
 <html>
