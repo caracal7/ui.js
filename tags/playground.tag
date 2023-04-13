@@ -59,7 +59,10 @@
         this.render();
         document.title = event.detail.caption + ' | i.js playground';
         if(event.detail.url.substr(-4) === '.tag') {
-            this.document.querySelector('iframe').srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><`+`script type="module" src="dist/i.js"></`+`script><style>html, body { padding: 0; margin: 0; height: 100%;}</style></head><body><`+`script type=i my-app="${event.detail.url}"></`+`script><my-app></my-app></body></html>`;
+            const path = window.location.pathname.split('/');
+            path.pop();
+            const base = path.join('/');
+            this.document.querySelector('iframe').srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><`+`script type="module" src="dist/i.js"></`+`script><style>html, body { padding: 0; margin: 0; height: 100%;}</style></head><body><`+`script type=i my-app="${base}/${event.detail.url}"></`+`script><my-app></my-app></body></html>`;
         } else {
             this.document.querySelector('iframe').removeAttribute('srcdoc');
             this.document.querySelector('iframe').src = event.detail.url;
