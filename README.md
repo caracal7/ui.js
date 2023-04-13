@@ -5,7 +5,6 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 
 Time is money. <a href="https://en.wikipedia.org/wiki/Time_to_market">Time to market</a> is the way to money. We don’t have the money to lose our time with slow dev tools.☝️ 🙂
 
-
 ## To Do list in 10 LOC
 
 <to-do></to-do>
@@ -36,9 +35,12 @@ Time is money. <a href="https://en.wikipedia.org/wiki/Time_to_market">Time to ma
 
 ## D3.js-like <b style="color:#42a425">Enter/Exit/Update</b> pattern and Virtual DOM together
 
+
 Modern state-of-art user interfaces are always animated. So why shouldn't state transitions be first-class citizens?
 
 <my-letters></my-letters>
+
+
 
 ```html
 <!DOCTYPE html>
@@ -162,7 +164,7 @@ If you are not... Well, it is still possible but your way would not be an easy o
 >
 > In real-world projects, it is recommended to [import tags from an external file](#fetch_tag)
 
-## Style animation when creating an element
+## Transitions
 
 ```html
 <!DOCTYPE html>
@@ -186,9 +188,10 @@ If you are not... Well, it is still possible but your way would not be an easy o
     </script>
 </body>
 </html>
-
 ```
-## Adding @click event
+
+## Events
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -206,7 +209,7 @@ If you are not... Well, it is still possible but your way would not be an easy o
 </html>
 ```
 
-## Adding state
+## State
 
 ```html
 <!DOCTYPE html>
@@ -294,7 +297,7 @@ If you are not... Well, it is still possible but your way would not be an easy o
 </html>
 ```
 
-## Adding styles
+## Stylesheet
 
 ```html
 <!DOCTYPE html>
