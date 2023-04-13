@@ -3,7 +3,7 @@
 
 <header class="top">
     <span><b>i</b><b style='color: #448ead'>.js</b> ❤️ playground</span>
-    <a href="index.html">API</a> | <a href="playground.html">Playground</a> | <a href="https://github.com">GitHub</a>
+    <a href="index.html">API</a> | <a href="playground.html">Playground</a> | <a href="https://github.com/caracal7/i.js">GitHub</a>
 </header>
 
 <@side-menu menu=state.menu category=state.category example=state.example @select></@side-menu>
@@ -40,7 +40,7 @@
             this.state.category = category.caption;
             this.select({}, { detail: {
                 caption: this.state.example,
-                url: `/playground/examples/${category.base}/${example.url}`
+                url: `playground/examples/${category.base}/${example.url}`
             }})
         }, 300);
     }
