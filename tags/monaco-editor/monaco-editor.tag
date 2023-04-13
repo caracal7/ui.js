@@ -10,7 +10,7 @@
         this.iframe = document.createElement("iframe");
         this.iframe.setAttribute('id',   this.NAME)
         this.iframe.setAttribute('name', this.NAME)
-        this.iframe.setAttribute('src', '/tags/monaco-editor/editor.html')
+        this.iframe.setAttribute('src', 'tags/monaco-editor/editor.html')
         this.document.appendChild(this.iframe);
 
         this.ReadyEvent = event => this.setValue(this.state.value !== undefined ? this.state.value : '');
