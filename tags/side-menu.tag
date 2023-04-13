@@ -15,7 +15,7 @@
                         state.example = example.caption;
                         this.emitNative('select', {
                             caption: example.caption,
-                            url: `/playground/examples/${category.base}/${example.url}`
+                            url: `playground/examples/${category.base}/${example.url}`
                         });
                     })/>
             </ul>
