@@ -3,7 +3,10 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 
 # Why?
 
-## 10 LOC "To Do list"
+Time is money. <a href="https://en.wikipedia.org/wiki/Time_to_market">Time to market</a> is the way to money. We don’t have the money to lose our time with slow dev tools.☝️ 🙂
+
+
+## To Do list in 10 LOC
 
 <to-do></to-do>
 
@@ -19,7 +22,7 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
         <input %value=state.default>
         <button @click({ state.todos.push({ name: state.default }) })>Add</button>
         <button @click({ state.todos = state.todos.filter(t => !t.done) })>Remove completed</button>
-        <div loop(state.todos as todo | k=>k)>
+        <div loop(state.todos as todo | k => k)>
             <input type="checkbox" %checked=todo.done>
             <input %value=todo.name>
         </div>
@@ -31,7 +34,9 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 </html>
 ```
 
-## D3.js-like Enter/Exit/Update pattern out of the box
+## D3.js-like <b style="color:#42a425">Enter/Exit/Update</b> pattern and Virtual DOM together
+
+Modern state-of-art user interfaces are always animated. So why shouldn't state transitions be first-class citizens?
 
 <my-letters></my-letters>
 
@@ -44,20 +49,24 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 </head>
 <body>
     <script type=i>
-        <svg attrs(width: 400, height: 300)>
-            <g loop(new Array(1).fill(0) as X, ind | d => d) attrs(transform: `translate(5, ${40+40*ind})`)>
-                <text loop(state.alphabet as letter, i | d => d) text(letter)
-                    enter(font: 'bold 24px monospace', fill: { to: '#FF0000', duration: 1500 })
-                    update(fill: { to: '#0088FF'})
-                    exit(fill: { to: '#CCCCCC', duration: 1000 })
-                    #enter(
-                        x: { to: (i * 15), ease: 'easeInOutQuint', duration: 1300 + i * 30 },
-                        y: { to: 50, ease: 'easeInOutQuint', duration: 1300 + i * 30 }
-                    )
-                    #update(x: { to: i * 15 }, y: { to: 50 })
-                    #exit(y: { to: 250, duration: 3000 + Math.random()*2000, ease: 'easeOutBounce' })/>
-            </g>
-        </svg>
+        <b loop(state.alphabet as letter, i | d => d) text(letter)
+            enter(
+                position: 'absolute',
+                font: 'bold 48px monospace',
+                display: 'block',
+                color: { to: '#FF0000', duration: 1500 },
+                left: { to: (i * 30)+'px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+                top: { to: '50px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+            )
+            update(
+                color: { to: '#0088FF' },
+                left: { to: (i * 30)+'px' },
+                top: { to: '50px' },
+            )
+            exit(
+                color: { to: '#CCCCCC', duration: 1000 },
+                top: { to: '250px', duration: 3000 + Math.random() * 2000, ease: 'easeOutBounce' }
+            )/>
 
         <!state>
             alphabet: []
@@ -118,6 +127,17 @@ All you need is **i.js** and a modern browser with <a href="https://developer
 - [i.js](dist/i.js) - IIFE (Default)
 - [i.esm.js](dist/i.esm.js) - ES module
 - [i.cjs.js](dist/i.cjs.js) - CommonJS
+
+## Before you start
+
+You should be familiar with major modern yet fundamental web technologies  🤗
+
+- HTML5 - visual structure</li>
+- CSS3 - styling</li>
+- JavaScript ES2018+ - application logic</li>
+
+If you are not... Well, it is still possible but your way would not be an easy one and your components would be ugly 💩
+
 
 ## Hello world
 ```html

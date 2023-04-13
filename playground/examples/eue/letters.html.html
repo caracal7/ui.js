@@ -8,29 +8,24 @@
 </head>
 <body>
     <script type=i>
-
-        <div style(width: '800px', height: '285px', 'border-bottom': '1px dashed gray')>
-            <section loop(new Array(1).fill(0) as X, ind | d => d) style(position: 'absolute', top: (40*ind)+'px')>
-                <b loop(state.alphabet as letter, i | d => d) text(letter)
-                    enter(
-                        position: 'absolute',
-                        font: 'bold 48px monospace',
-                        display: 'block',
-                        color: { to: '#FF0000', duration: 1500 },
-                        left: { to: (i * 30)+'px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
-                        top: { to: '50px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
-                    )
-                    update(
-                        color: { to: '#0088FF' },
-                        left: { to: (i * 30)+'px' },
-                        top: { to: '50px' },
-                    )
-                    exit(
-                        color: { to: '#CCCCCC', duration: 1000 },
-                        top: { to: '250px', duration: 3000 + Math.random() * 2000, ease: 'easeOutBounce' }
-                    )/>
-            </section>
-        </div>
+        <b loop(state.alphabet as letter, i | d => d) text(letter)
+            enter(
+                position: 'absolute',
+                font: 'bold 48px monospace',
+                display: 'block',
+                color: { to: '#FF0000', duration: 1500 },
+                left: { to: (i * 30)+'px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+                top: { to: '50px', ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+            )
+            update(
+                color: { to: '#0088FF' },
+                left: { to: (i * 30)+'px' },
+                top: { to: '50px' },
+            )
+            exit(
+                color: { to: '#CCCCCC', duration: 1000 },
+                top: { to: '250px', duration: 3000 + Math.random() * 2000, ease: 'easeOutBounce' }
+            )/>
 
         <!state>
             alphabet: []

@@ -1,16 +1,14 @@
 <svg attrs(width: 800, height: 300)>
-    <g loop(new Array(1).fill(0) as X, ind | d => d) attrs(transform: `translate(5, ${40+40*ind})`)>
-        <text loop(state.alphabet as letter, i | d => d) text(letter)
-            enter(font: 'bold 48px monospace', fill: { to: '#FF0000', duration: 1500 })
-            update(fill: { to: '#0088FF'})
-            exit(fill: { to: '#CCCCCC', duration: 1000 })
-            #enter(
-                x: { to: (i * 30), ease: 'easeInOutQuint', duration: 1300 + i * 30 },
-                y: { to: 50, ease: 'easeInOutQuint', duration: 1300 + i * 30 }
-            )
-            #update(x: { to: i * 30 }, y: { to: 50 })
-            #exit(y: { to: 250, duration: 3000 + Math.random()*2000, ease: 'easeOutBounce' })/>
-    </g>
+    <text loop(state.alphabet as letter, i | d => d) text(letter)
+        enter(font: 'bold 48px monospace', fill: { to: '#0088FF', duration: 1500 })
+        update(fill: { to: '#42a425'})
+        exit(fill: { to: '#CCCCCC', duration: 1000 })
+        #enter(
+            x: { to: (i * 30), ease: 'easeInOutQuint', duration: 1300 + i * 30 },
+            y: { to: 50, ease: 'easeInOutQuint', duration: 1300 + i * 30 }
+        )
+        #update(x: { to: i * 30 }, y: { to: 50 })
+        #exit(y: { to: 250, duration: 3000 + Math.random()*2000, ease: 'easeOutBounce' })/>
 </svg>
 
 <!state>

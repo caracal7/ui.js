@@ -34,3 +34,12 @@
     disconnected(){
         this._observer.disconnect();
     }
+
+<!style>
+
+    to-do {
+        display: block;
+        border: 1px dashed gray;
+        padding: 30px;
+
+    }
