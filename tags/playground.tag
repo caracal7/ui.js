@@ -62,7 +62,6 @@
             const path = window.location.pathname.split('/');
             path.pop();
             const base = path.join('/');
-            console.log(base, `${base}/${event.detail.url}`);
             this.document.querySelector('iframe').srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><`+`script type="module" src="dist/i.js"></`+`script><style>html, body { padding: 0; margin: 0; height: 100%;}</style></head><body><`+`script type=i my-app="${base}/${event.detail.url}"></`+`script><my-app></my-app></body></html>`;
         } else {
             this.document.querySelector('iframe').removeAttribute('srcdoc');
