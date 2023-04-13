@@ -115,9 +115,9 @@ All you need is **i.js** and a modern browser with <a href="https://developer
 
 **i.js** v0.5.7 pre-alpha
 
-- [i.js](/dist/i.js) - IIFE (Default)
-- [i.esm.js](/dist/i.esm.js) - ES module
-- [i.cjs.js](/dist/i.cjs.js) - CommonJS
+- [i.js](dist/i.js) - IIFE (Default)
+- [i.esm.js](dist/i.esm.js) - ES module
+- [i.cjs.js](dist/i.cjs.js) - CommonJS
 
 ## Hello world
 ```html
