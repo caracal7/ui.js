@@ -3,7 +3,7 @@
 
 <header class="top">
     <span><b>i</b><b style='color: #448ead'>.js</b> ❤️ playground</span>
-    <a href="/index.html">API</a> | <a href="/playground.html">Playground</a> | <a href="https://github.com">GitHub</a>
+    <a href="index.html">API</a> | <a href="playground.html">Playground</a> | <a href="https://github.com">GitHub</a>
 </header>
 
 <@side-menu menu=state.menu category=state.category example=state.example @select></@side-menu>
@@ -59,7 +59,7 @@
         this.render();
         document.title = event.detail.caption + ' | i.js playground';
         if(event.detail.url.substr(-4) === '.tag') {
-            this.document.querySelector('iframe').srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><`+`script type="module" src="/dist/i.js"></`+`script><style>html, body { padding: 0; margin: 0; height: 100%;}</style></head><body><`+`script type=i my-app="${event.detail.url}"></`+`script><my-app></my-app></body></html>`;
+            this.document.querySelector('iframe').srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><`+`script type="module" src="dist/i.js"></`+`script><style>html, body { padding: 0; margin: 0; height: 100%;}</style></head><body><`+`script type=i my-app="${event.detail.url}"></`+`script><my-app></my-app></body></html>`;
         } else {
             this.document.querySelector('iframe').removeAttribute('srcdoc');
             this.document.querySelector('iframe').src = event.detail.url;
