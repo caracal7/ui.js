@@ -20,4 +20,4 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 
 It empowers an effortless creation of highly scalable and easily maintainable applications without Babel transpiler, Parcel, Webpack and any complicated toolchain.
 
-[Playground](caracal7.github.io/i.js/playground.html)
+[Playground](https://caracal7.github.io/i.js/playground.html)
