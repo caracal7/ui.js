@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello world</title>
+    <script src="../../../dist/i.js"></script>
+</head>
+<body>
+
+    <script type=i>
+        <h2>WASM counter</h2>
+
+        <button @click({
+            state.list.push({ name: this.walt.add() })
+        })>Get result from walt.add() and add it to list</button>
+
+        <ul>
+            <li loop(state.list as item | d => d) text(item.name)/>
+        </ul>
+
+        <p>
+            Last count from Walt: <span text(this.walt.last_count())/>
+        </p>
+
+        <button @click({
+            console.log(this.walt.last_count());
+        })>Console result</button>
+
+        <!state>
+            list: []
+
+        <!walt>
+            let counter: i32 = 20;
+
+            export function add(): i32 {
+                counter += 10;
+                return counter;
+            }
+
+            export function last_count(): i32 {
+                return counter;
+            }
+
+
+    </script>
+
+</body>
+</html>
