@@ -124,7 +124,7 @@ All you need is **i.js** and a modern browser with <a href="https://developer
 
 **<b style="color:red">Do not use</b> in production until v.0.7 will be released**
 
-**i.js** v0.5.7 pre-alpha
+**i.js** v0.5.69 pre-alpha
 
 - [i.js](dist/i.js) - IIFE (Default)
 - [i.esm.js](dist/i.esm.js) - ES module
