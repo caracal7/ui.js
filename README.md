@@ -1,11 +1,11 @@
-# i.js
+# ui.js
 Modern, concise, developer-friendly &amp; zero-config DSL for creating user interfaces.
 
 
 ![Virtual DOM and d3.js like ENTER/EXIT/UPDATE pattern together](letters.gif)
 
 
-# Philosophy and Zen of <b style="color:#42a425">i.js</b>
+# Philosophy and Zen of <b style="color:#42a425">ui.js</b>
 
 - **Develop faster**. No dev server, no bundler, no toolchain, no bootstrap template. Starts up in 0 ms 🔥
 - Declare new components right inside HTML. Try any ideas right now! 🤘
@@ -16,8 +16,8 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 - Less superfluous language constructions to solve common tasks
 - Unleash the power of WASM in JavaScript manner
 
-**i.js** aims to provide a tool for development and application architecture out of the box.
+**ui.js** aims to provide a tool for development and application architecture out of the box.
 
 It empowers an effortless creation of highly scalable and easily maintainable applications without Babel transpiler, Parcel, Webpack and any complicated toolchain.
 
-[Playground](https://caracal7.github.io/i.js/playground.html)
+[Playground](https://caracal7.github.io/ui.js/playground.html)
