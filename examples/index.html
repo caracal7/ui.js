@@ -202,7 +202,7 @@
                 return [ str.slice(0, index), str.slice(index + 1) ];
             }
 
-            const base = splitLast(window.location.pathname, '/')[0].substr(1) + '/';//window.location.pathname.split('/')[1]+'/';
+            const base = splitLast(window.location.pathname, '/')[0].substr(1) + '/';
 
             console.log('base', base)
             console.log('window.location', window.location)
@@ -219,6 +219,7 @@
                         <meta name="viewport" content="width=device-width,initial-scale=1.0">
                         <`+`script type="module" src="`+(DEV ? '/src/index.js' : '../dist/ui.js')+`"></`+`script>
                         <style>html, body { padding: 0; margin: 0; height: 100%; }</style>
+                        <base href="${window.location.origin+'/'+base}"/>
                     </head>
                     <body>
                         <`+`script type=ui example-app="${base + url}"></`+`script>
@@ -233,7 +234,7 @@
                         const src = (await (await fetch(url).catch(e => false)).text()).trim();
                         this.$('iframe').srcdoc = src
                             .replaceAll(/<script id="__bs_script__.*\/\/]]><\/script>/gs, "") // remove browserSync
-                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script>');
+                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script><base href="'+window.location.origin+'/'+base+'/>');
                     }
 
 
