@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>ui.js examples</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="../dist/ui.js"></script>
+    <script type="module" src="/src/index.js"></script>
     <style>
         html, body { padding: 0; margin: 0; height: 100%;}
     </style>
@@ -188,8 +188,6 @@
             <@download-example if(state.selected_example) example=state.selected_example/>
 
         <!static>
-            const DEV = false;
-
             function splitLast(str, substring) {
                 const index = str.lastIndexOf(substring);
                 return [ str.slice(0, index), str.slice(index + 1) ];
@@ -200,13 +198,14 @@
         <!class>
             async load2iframe(url) {
                 if(url.substr(-4) === '.tag') {
+                    this.$('iframe').removeAttribute('src');
                     this.$('iframe').srcdoc = `
                     <!DOCTYPE html>
                     <html>
                     <head>
                         <meta charset="utf-8">
                         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-                        <`+`script type="module" src="`+(DEV ? '/src/index.js' : '../dist/ui.js')+`"></`+`script>
+                        <`+`script type="module" src="/src/index.js"></`+`script>
                         <style>html, body { padding: 0; margin: 0; height: 100%; }</style>
                     </head>
                     <body>
@@ -215,21 +214,8 @@
                     </body>
                     </html>`;
                 } else {
-                    if(DEV) {
-                        this.$('iframe').removeAttribute('srcdoc');
-                        this.$('iframe').src = url;
-
-                    } else {
-                        const src = (await (await fetch(url).catch(e => false)).text()).trim();
-                        this.$('iframe').srcdoc = src
-                            .replace(/<script type=ui ([^>]*)=dialog.tag>/gs, '')
-                            .replace(new RegExp("(<script\\s+type\\s*=ui\\s*[^=]+=\\s*)([^>]+)",'im'), '$1'+base + splitLast(url,'/')[0]+`/$2`)
-
-                            .replaceAll(/<script id="__bs_script__.*\/\/]]><\/script>/gs, "") // remove browserSync
-                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script>');
-                    }
-
-
+                    this.$('iframe').removeAttribute('srcdoc');
+                    this.$('iframe').src = url;
                 }
             }
 
