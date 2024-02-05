@@ -1,0 +1,85 @@
+:host {
+    font-family: Arial;
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height:100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+
+    background:
+        radial-gradient(black 15%, transparent 16%) 0 0,
+        radial-gradient(black 15%, transparent 16%) 8px 8px,
+        radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px,
+        radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
+    background-color: #282828;
+    background-size: 16px 16px;
+}
+
+footer {
+    position: fixed;
+    bottom: 35px;
+    width: 100%;
+}
+
+button {
+    width: 50%;
+    height: 50px;
+    background: #015E5B;
+    color: white;
+    box-shadow:inset 0 -0.6em 1em -0.35em rgba(0,0,0,0.17),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+    border: 0;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: gold;
+    color: black;
+}
+
+section {
+    right: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: var(--inner);
+    border-radius: var(--border);
+    color: white;
+}
+
+header {
+    position: absolute;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.1);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    top: var(--doubleborder);
+    width: calc(100% - var(--inner) - var(--doubleborder));
+    height:var(--block);
+    line-height: var(--block);
+    font-size: var(--font-size);
+    padding-left: var(--doubleborder);
+    left: var(--doubleborder);
+    border-radius: var(--border);
+}
+
+svg {
+    position:absolute;
+    top: 0;
+    right: 0;
+    width: var(--inner);
+    height: var(--inner);
+}
+
+svg > path {
+    transform: translate(var(--halfinner), var(--halfinner));
+}

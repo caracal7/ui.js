@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Splitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/src/index.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        *:not(:defined) > * {
+            display: none;
+        }
+        ui-split[separator] {
+            padding: 0;
+            background: #444444;
+        }
+    </style>
+</head>
+
+<body>
+    <script type=ui ui-split=splitter.tag></script>
+
+    <ui-split vertical height="100vh">
+        <ui-split height="70px" max-height="150px" style="padding:5px;background:lightgreen">
+            height: 70px<br>
+            max-height: 150px
+        </ui-split>
+
+        <ui-split separator></ui-split>
+
+        <ui-split horizontal auto>
+            <ui-split width="150px" style="background:lightgreen">
+                width: 150px<br>
+                fixed
+            </ui-split>
+
+            <ui-split separator fixed></ui-split>
+
+            <ui-split vertical min-width="50px" style="background:lightblue">
+                <ui-split height="4em">min-width: 50px</ui-split>
+                <ui-split separator></ui-split>
+                <ui-split auto>Auto size</ui-split>
+            </ui-split>
+
+            <ui-split separator></ui-split>
+
+            <ui-split auto style="padding:10px">
+                Auto size<br>
+
+                <p>Set <b>horizontal</b> or <b>vertical</b> attribute to the parent element of the panes.</p>
+                <p>Insert <code>&lt;ui-split separator&gt;&lt;/ui-split&gt;</code> or <code>&lt;ui-split separator fixed&gt;&lt;/ui-split&gt;</code> between each pane.</p>
+
+                <p>
+                    Set the following attributes for each pane as required:
+                    <ul>
+                        <li><b>width</b> / <b>height</b> for the initial size</li>
+                        <li><b>min-width</b> / <b>min-height</b> for the minimum size</li>
+                        <li><b>max-width</b> / <b>max-height</b> for the maximum size</li>
+                        <li><b>auto</b> for filling space</li>
+                    </ul>
+                </p>
+            </ui-split>
+
+            <ui-split separator></ui-split>
+
+            <ui-split min-width="50px" max-width="200px" style="background:lightgreen">
+                min-width: 50px<br>
+                max-width: 200px
+            </ui-split>
+        </ui-split>
+
+        <ui-split separator fixed></ui-split>
+
+        <ui-split height="130px" style="background:lightblue">
+            footer fixed<br>
+            height: 130px
+        </ui-split>
+    </ui-split>
+
+</body>
+</html>

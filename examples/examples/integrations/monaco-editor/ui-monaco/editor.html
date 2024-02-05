@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	</head>
+	<body>
+		<script>
+			window.MonacoIsReady = monaco => {
+
+
+				monaco.languages.register({
+		            id: 'ui.js'
+		        });
+
+		        monaco.languages.setMonarchTokensProvider('ui.js', {
+					defaultToken: '',
+					tokenPostfix: '.html',
+					ignoreCase: true,
+
+					// The main tokenizer for our languages
+					tokenizer: {
+						root: [
+							[/<!DOCTYPE/, 'metatag', '@doctype'],
+							[/<!(css|tag|import)/, 'metatag', '@ui_meta'],
+							[/<!static>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'text/javascript' }],
+							[/<!class>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'text/javascript' }],
+							[/<!state>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'text/javascript' }],
+							[/<!walt>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'text/javascript' }],
+							[/<!style>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'text/css' }],
+							[/<!template>/, { token: 'metatag', next: '@ui_next_block', nextEmbedded: 'ui.js' }],
+
+							[/<!--/, 'comment', '@comment'],
+
+
+							[/(<)(script)/, ['delimiter', { token: 'tag', next: '@script' }]],
+							[/(<)(style)/, ['delimiter', { token: 'tag', next: '@style' }]],
+
+
+
+
+							[/(<)((?:[@\w\-]+:)?[@\w\-]+)/, ['delimiter', { token: 'tag', next: '@otherTag' }]],
+							[/(<\/)((?:[@\w\-]+:)?[@\w\-]+)/, ['delimiter', { token: 'tag', next: '@otherTag' }]],
+
+							[/</, 'delimiter'],
+							[/[^<]+/], // text
+
+
+						],
+
+						ui_meta: [
+							[/[^>]+/, 'metatag.content'],
+							[/>/, 'metatag', '@pop'],
+						],
+
+						ui_next_block: [
+							[/<!/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
+						],
+
+
+						doctype: [
+							[/[^>]+/, 'metatag.content'],
+							[/>/, 'metatag', '@pop'],
+						],
+
+						comment: [
+							[/-->/, 'comment', '@pop'],
+							[/[^-]+/, 'comment.content'],
+							[/./, 'comment.content']
+						],
+
+						otherTag: [
+							[/{/, { token: 'metatag', next: '@ui_script', nextEmbedded: 'text/javascript' }],
+
+
+							[/((text)\()(.*)(\))/, 'string'],
+							[/((loop|if)\()(.*)(\))/, 'metatag.content'],
+
+
+
+
+							[/\/?>/, 'delimiter', '@pop'],
+
+
+							[/"([^"]*)"/, 'attribute.value'],
+							[/'([^']*)'/, 'attribute.value'],
+							[/[\w\-]+/, 'attribute.name'],
+							[/=/, 'delimiter'],
+							[/[ \t\r\n]+/], // whitespace
+						],
+
+
+						ui_script: [
+					  	    [/}/, { token: 'metatag', next: '@pop', nextEmbedded: '@pop' }],
+					    ],
+
+
+
+						// -- BEGIN <script> tags handling
+
+						// After <script
+						script: [
+							[/type/, 'attribute.name', '@scriptAfterType'],
+							[/"([^"]*)"/, 'attribute.value'],
+							[/'([^']*)'/, 'attribute.value'],
+							[/[\w\-]+/, 'attribute.name'],
+							[/=/, 'delimiter'],
+							[/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'text/javascript' }],
+							[/[ \t\r\n]+/], // whitespace
+							[/(<\/)(script\s*)(>)/, ['delimiter', 'tag', { token: 'delimiter', next: '@pop' }]]
+						],
+
+						// After <script ... type
+						scriptAfterType: [
+							[/=/, 'delimiter', '@scriptAfterTypeEquals'],
+							[/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'text/javascript' }], // cover invalid e.g. <script type>
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/script\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						// After <script ... type =
+						scriptAfterTypeEquals: [
+							[/(ui|i)/, { token: 'attribute.value', switchTo: '@scriptUIjs.$1' }],
+							[/"(ui|i)"/, { token: 'attribute.value', switchTo: '@scriptUIjs.$1' }],
+							[/'(ui|i)'/, { token: 'attribute.value', switchTo: '@scriptUIjs.$1' }],
+							[/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'text/javascript' }], // cover invalid e.g. <script type=>
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/script\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						// After <script ... type = $S2
+						scriptUIjs: [
+							[/>/, { token: 'delimiter', next: '@scriptEmbedded', nextEmbedded: 'ui.js' }],
+							[/(ui|i)/, 'attribute.value'],
+							[/"([^"]*)"/, 'attribute.value'],
+							[/'([^']*)'/, 'attribute.value'],
+							[/[\w\-]+/, 'attribute.name'],
+							[/=/, 'delimiter'],
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/script\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						scriptEmbedded: [
+							[/<\/script/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
+							[/[^<]+/, '']
+						],
+
+						// -- END <script> tags handling
+
+
+						// -- BEGIN <style> tags handling
+
+						// After <style
+						style: [
+							[/type/, 'attribute.name', '@styleAfterType'],
+							[/"([^"]*)"/, 'attribute.value'],
+							[/'([^']*)'/, 'attribute.value'],
+							[/[\w\-]+/, 'attribute.name'],
+							[/=/, 'delimiter'],
+
+							[/\/>/, { token: '@rematch', next: '@pop' }], // style text() hack
+
+							[/>/, { token: 'delimiter', next: '@styleEmbedded', nextEmbedded: 'text/css' }],
+
+							[/[ \t\r\n]+/], // whitespace
+							[/(<\/)(style\s*)(>)/, ['delimiter', 'tag', { token: 'delimiter', next: '@pop' }]]
+						],
+
+
+
+						// After <style ... type
+						styleAfterType: [
+							[/=/, 'delimiter', '@styleAfterTypeEquals'],
+							[/>/, { token: 'delimiter', next: '@styleEmbedded', nextEmbedded: 'text/css' }], // cover invalid e.g. <style type>
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/style\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						// After <style ... type =
+						styleAfterTypeEquals: [
+							[/"([^"]*)"/, { token: 'attribute.value', switchTo: '@styleWithCustomType.$1' }],
+							[/'([^']*)'/, { token: 'attribute.value', switchTo: '@styleWithCustomType.$1' }],
+							[/>/, { token: 'delimiter', next: '@styleEmbedded', nextEmbedded: 'text/css' }], // cover invalid e.g. <style type=>
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/style\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						// After <style ... type = $S2
+						styleWithCustomType: [
+							[/>/, { token: 'delimiter', next: '@styleEmbedded.$S2', nextEmbedded: '$S2' }],
+							[/"([^"]*)"/, 'attribute.value'],
+							[/'([^']*)'/, 'attribute.value'],
+							[/[\w\-]+/, 'attribute.name'],
+							[/=/, 'delimiter'],
+							[/[ \t\r\n]+/], // whitespace
+							[/<\/style\s*>/, { token: '@rematch', next: '@pop' }]
+						],
+
+						styleEmbedded: [
+							[/<\/style/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
+							[/[^<]+/, '']
+						],
+
+						// -- END <style> tags handling
+					},
+				});
+
+				monaco.editor.defineTheme('i-theme', {
+					base: 'vs-dark',
+					inherit: true,
+					rules: [
+						{ token: 'global', foreground: 'FF00FF', fontStyle: "bold" },
+						{ token: 'keyword', foreground: 'adff00', fontStyle: "bold" },
+						{ token: 'comment', foreground: '666666' },
+						{ token: 'number', foreground: 'ffc600' },
+						{ token: 'string', foreground: '76c7ee' },
+						{ token: 'type', fontStyle: 'italic' },
+						{ token: 'type.identifier', foreground: 'ff0000' },
+						{ token: 'metatag.html', foreground: 'ff6a00', fontStyle: "bold" },
+						{ token: 'metatag.content.html', foreground: 'cac26c' },
+
+						//	Javascript
+						{ token: 'keyword.js', foreground: '9df6af' },
+						{ token: 'string.js', foreground: '76c7ee' },
+						{ token: 'type.identifier.js', foreground: 'd5fe5e', fontStyle: "normal" },
+						{ token: 'identifier.js', foreground: '86d295' },
+						{ token: 'delimiter.js', foreground: '777777' },
+						{ token: 'delimiter.bracket.js', foreground: '568760' },
+						{ token: 'delimiter.parenthesis.js', foreground: '6cac79' },
+						{ token: 'regexp.js', foreground: 'b46695'},
+
+						//  HTML
+						{ token: 'delimiter.html', foreground: '4b6161'},
+						{ token: 'tag.html', foreground: '56b1a1'},
+						{ token: 'attribute.name.html', foreground: '90eede'},
+						{ token: 'attribute.value.html', foreground: 'b8fff3'},
+
+						//	CSS
+						{ token: 'tag.css', foreground: 'f93c9a' },
+						{ token: 'delimiter.css', foreground: '777777' },
+						{ token: 'attribute.name.css', foreground: 'bb5ed1' },
+						{ token: 'attribute.value.css', foreground: 'ddaffc' },
+						{ token: 'attribute.value.hex.css', foreground: '#ffa800' },
+						{ token: 'attribute.value.number.css', foreground: 'ffc600' },
+						{ token: 'attribute.value.unit.css', foreground: 'b5cea8' },
+
+
+
+
+
+					],
+					colors: {
+						'editorCursor.foreground': '#ffff00',
+				//		  'editor.lineHighlightBackground': '#0000FF20',
+				//		  'editorLineNumber.foreground': '#008800',
+				//		  'editor.selectionBackground': '#88000030',
+				//		  'editor.inactiveSelectionBackground': '#88000015'
+					}
+				});
+				monaco.editor.setTheme('myTheme');
+
+
+				const Editor = monaco.editor.create(document.getElementById('root'), {
+					value: '',
+					language: 'ui.js',
+					theme: "i-theme",
+					readOnly: false,
+					noSemanticValidation: true,
+  					noSyntaxValidation: true,
+
+					roundedSelection: false,
+					scrollBeyondLastLine: false,
+					acceptSuggestionOnEnter: "off",
+					suggestOnTriggerCharacters: false,
+					//suggestSelection: "recentlyUsed",
+					folding: true,
+					wordBasedSuggestions: false,
+					quickSuggestions: false,
+					tabCompletion: "off",
+					scrollbar: {
+						verticalHasArrows: true,
+					},
+					dragAndDrop: true,
+					links: true,
+					minimap: {
+						enabled: true,
+					},
+					showFoldingControls: "always",
+					scrollBeyondLastLine: false,
+					smoothScrolling: true,
+					lineNumbers: 'on',
+ 					glyphMargin: false,
+				});
+
+				window.onresize = () => Editor.layout();
+
+				Editor.onDidChangeModelContent(() =>
+					window.parent.document.dispatchEvent(
+						new CustomEvent('monaco-editor-'+window.name, {
+							detail: Editor.getValue()
+						})
+					)
+				);
+
+
+				window.document.addEventListener('setLanguage', event => monaco.editor.setModelLanguage(monaco.editor.getModels()[0], event.detail));
+				window.document.addEventListener('setValue',    event => Editor.setValue(String(event.detail)));
+				window.document.addEventListener('setReadOnly', event => Editor.updateOptions({ readOnly: event.detail }));
+
+				window.parent.document.dispatchEvent(
+					new CustomEvent('monaco-editor-ready-'+window.name, {
+						detail: {}
+					})
+				)
+			}
+		</script>
+		<script src="main.bundle.js"></script>
+	</body>
+</html>

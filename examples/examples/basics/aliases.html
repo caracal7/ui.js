@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="module" src="/src/index.js"></script>
+</head>
+<body>
+    <script type=ui>
+        <!tag @colored colored.tag>
+
+        <@colored color=state.color/>
+        <@colored color=state.color2/>
+        <@colored color=state.color3/>
+
+        <hr>
+
+        <button text('Change color') @click{
+            state.color  = "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
+            state.color2 = "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
+            state.color3 = "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
+        }/>
+
+        <!state>
+            color:  '#c0278f',
+            color2: '#78c02f',
+            color3: '#c08f78'
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Splitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/src/index.js"></script>
+    <style>
+        html, body {
+            padding: 50px;
+            margin: 0;
+            height: 100%;
+        }
+        *:not(:defined) > * {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script type=ui ui-dialog=dialog.tag></script>
+
+    <!----------------------------->
+
+    <ui-dialog next=true>
+        <div style='padding:30px'>
+            Dialog 1
+        </div>
+    </ui-dialog>
+
+    <button>Use click to any next element to open dialog</button>
+
+    <!----------------------------->
+
+    <ui-dialog id='my_dialog'
+        cancel="Go away..."
+        submit="Boom"
+        css="background:#ffffaa;padding:100px"
+        onclose="alert('close')"
+        onsubmit="alert('submit')">
+        <ul style=''>
+            <li>Submit / close events</li>
+            <li>Custom button captions</li>
+            <li>Custom css for dialog body</li>
+        </ul>
+    </ui-dialog>
+
+    <br>
+    <button onclick="document.querySelector('#my_dialog').open()">Manual open dialog</button>
+
+    <!----------------------------->
+
+
+
+
+    <br>
+    <script type=ui>
+
+        <ui-dialog id='my_dialog2' disabled=state.disabled>
+            <div style='padding:30px'>
+                <input type="checkbox" %checked=state.disabled> Submit button disabled
+            </div>
+        </ui-dialog>
+
+        <button text('Manual open dialog from ui.js') @click{
+            const dialog = this.$('#my_dialog2');
+            dialog.open();
+        }/>
+
+        <!state>
+            disabled: true
+    </script>
+
+
+
+
+</body>
+</html>

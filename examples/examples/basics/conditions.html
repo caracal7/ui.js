@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="module" src="/src/index.js"></script>
+</head>
+<body>
+    <script type=ui>
+        <h1 if(state.x > 50)>Meow</h1>
+        <h2 text(state.x)/>
+
+        <button @click{state.x = 10}>X = 10</button>
+        <button @click{state.x = 100}>X = 100</button>
+
+        <!state>
+            x: 10
+    </script>
+</body>
+</html>

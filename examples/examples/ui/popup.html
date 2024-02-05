@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Splitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/src/index.js"></script>
+    <style>
+        html, body {
+            padding: 50px;
+            margin: 0;
+            height: 100%;
+            font-family: sans-serif;
+            font-size: 13px;
+        }
+        *:not(:defined) > * {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script type=ui popup-menu=popup-menu.tag></script>
+
+<!---
+    Using with plain JavaScript
+-->
+    <popup-menu next=true>
+        <nav disabled=true>Hello</nav>
+        <hr>
+        <nav>world</nav>
+    </popup-menu>
+    <button>Use "click to any next element" to open menu</button>
+
+
+    <br><br><br><br><br><br>
+
+    <!----------------------------->
+    <popup-menu id='my_menu'>
+        <nav onselect="alert('select')">➕ Create</nav>
+        <nav>✏️ Rename</nav>
+            <hr>
+        <nav>🏷 Tags</nav>
+            <hr>
+        <nav disabled=true>⬆️ Move up</nav>
+        <nav>⬇️ Move down</nav>
+            <hr>
+        <nav>📷 Copy </nav>
+        <nav>✂️ Cut</nav>
+            <hr>
+        <nav disabled=true>📋 Paste</nav>
+            <hr>
+        <nav>❌ Delete</nav>
+    </popup-menu>
+
+    <!----------------------------->
+    <button onclick="document.querySelector('#my_menu').open()">Manual open menu</button>
+    <br>
+<!---
+    Using with ui.js
+-->
+    <!----------------------------->
+
+    <script type=ui>
+        <button text('Show popup menu from ui.js') @click{
+            const my_menu = document.querySelector('#my_menu');
+            my_menu.open();
+        }/><br>
+
+        <popup-menu id="menu3">
+            <nav text('Menu for #'+state.selected)/>
+            <hr>
+            <nav>:)</nav>
+        </popup-menu>
+
+        <h4>Set menu position</h4>
+
+        <ul>
+            <li loop([...Array(10).keys()] as ind|d => d)
+                text('Item #'+ind)
+                @click{
+                    state.selected = ind;
+                    const menu3 = this.$('#menu3');
+                    menu3.open({ top: element.offsetTop + 'px' }); // top, bottom, left, right
+                }/>
+        </ul>
+
+        <!state>
+            selected: undefined
+
+
+
+    </script>
+
+</body>
+</html>
