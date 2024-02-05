@@ -17,7 +17,7 @@
     <script type=ui>
 
         <!state>
-            default: 'eue/letters.html',
+            default: 'ui/windows.html',
             menu: [
                 { caption: 'Basics', submenu: [
                     { caption: 'Hello world',           base: 'basics', urls: ['hello-world.html'] },
@@ -64,13 +64,6 @@
                     { caption: 'Test To-Do list',     base: 'to-do', urls: ['test-to-do.tag', 'test-to-do.css'] },
                 ]},
 
-                { caption: 'Wip', submenu: [
-                    { caption: 'Test1',         base: 'wip', urls: ['test1.tag'] },
-                    { caption: 'sticky-header', base: 'wip', urls: ['sticky-header.html'] },
-                    { caption: 'snake-nav',     base: 'wip', urls: ['snake-nav.html'] },
-                    { caption: 'snake-nav2',    base: 'wip', urls: ['snake-nav2.tag'] },
-                    { caption: 'Spring grid',   base: 'wip', urls: ['spring-grid.tag'] },
-                ]},
                 { caption: 'Demo', submenu: [
                     { caption: 'Minesweepper',          base: 'demo', urls: ['minesweeper.tag'] },
                     { caption: 'Kanban',                base: 'demo', urls: ['kanban.tag'] },
@@ -204,10 +197,6 @@
 
             const base = splitLast(window.location.pathname, '/')[0].substr(1) + '/';
 
-            console.log('base', base)
-            console.log('window.location', window.location)
-
-
         <!class>
             async load2iframe(url) {
                 if(url.substr(-4) === '.tag') {
@@ -219,7 +208,6 @@
                         <meta name="viewport" content="width=device-width,initial-scale=1.0">
                         <`+`script type="module" src="`+(DEV ? '/src/index.js' : '../dist/ui.js')+`"></`+`script>
                         <style>html, body { padding: 0; margin: 0; height: 100%; }</style>
-                        <base href="${window.location.origin+'/'+base}"/>
                     </head>
                     <body>
                         <`+`script type=ui example-app="${base + url}"></`+`script>
@@ -230,11 +218,15 @@
                     if(DEV) {
                         this.$('iframe').removeAttribute('srcdoc');
                         this.$('iframe').src = url;
+
                     } else {
                         const src = (await (await fetch(url).catch(e => false)).text()).trim();
                         this.$('iframe').srcdoc = src
+                            .replace(/<script type=ui ([^>]*)=dialog.tag>/gs, '')
+                            .replace(new RegExp("(<script\\s+type\\s*=ui\\s*[^=]+=\\s*)([^>]+)",'im'), '$1'+base + splitLast(url,'/')[0]+`/$2`)
+
                             .replaceAll(/<script id="__bs_script__.*\/\/]]><\/script>/gs, "") // remove browserSync
-                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script><base href="'+window.location.origin+'/'+base+'"/>');
+                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script>');
                     }
 
 
