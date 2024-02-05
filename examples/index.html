@@ -228,7 +228,7 @@
                     if(src === false) throw 'Error loading ' + url;
                     const source = (await src.text()).trim()
                         .replaceAll(/<script id="__bs_script__.*\/\/]]><\/script>/gs, "") // remove browserSync
-                        .replaceAll(/<script type="module" src="\/src\/index\.js"><\/script>/gs, '<'+'script src="ui.js"></'+'script>');
+                        .replaceAll(/<script type="module" src="\.\.\/\.\.\/src\/index\.js"><\/script>/gs, '<'+'script src="ui.js"></'+'script>');
                     example.sources.push(source);
                 }
                 this.render();
