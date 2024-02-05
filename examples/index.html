@@ -234,7 +234,7 @@
                         const src = (await (await fetch(url).catch(e => false)).text()).trim();
                         this.$('iframe').srcdoc = src
                             .replaceAll(/<script id="__bs_script__.*\/\/]]><\/script>/gs, "") // remove browserSync
-                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script><base href="'+window.location.origin+'/'+base+'/>');
+                            .replaceAll(/src="\/src\/index\.js"><\/script>/gs, 'src="../dist/ui.js"></'+'script><base href="'+window.location.origin+'/'+base+'"/>');
                     }
 
 
