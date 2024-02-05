@@ -197,16 +197,16 @@
         <!static>
             const DEV = false;
 
-
-            const base = window.location.pathname.split('/')[1]+'/';
-
-            console.log('base', base)
-            console.log('window.location', window.location)
-
             function splitLast(str, substring) {
                 const index = str.lastIndexOf(substring);
                 return [ str.slice(0, index), str.slice(index + 1) ];
             }
+
+            const base = splitLast(window.location.pathname, '/')[0].substr(1) + '/';//window.location.pathname.split('/')[1]+'/';
+
+            console.log('base', base)
+            console.log('window.location', window.location)
+
 
         <!class>
             async load2iframe(url) {
