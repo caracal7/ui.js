@@ -69,7 +69,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     //uvs.x = uvs.x + sin(uvs.x*4.+iTime*6.)*0.005;
 
     //zoomer
-    //uvs *= (cos(iTime/2.) *0.2 + 1.);
+    uvs *= (cos(iTime/2.) *0.05 + 1.);
 
     //slide columns down separately
     //tile H coord
@@ -127,3 +127,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragColor = vec4(hsv2rgb(tileHSV),1.0);
 
 }`/>
+
+<!style>
+    :host {
+        z-index: -1000;
+    }

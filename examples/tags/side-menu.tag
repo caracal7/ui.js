@@ -1,6 +1,6 @@
 <aside>
 
-    <h2><b>ui.js</b> by example</h2>
+    <h2><a href='../index.html'>ui.js</a> by example</h2>
 
     <ul>
         <li loop(state.menu as category | d => d.caption)
@@ -184,4 +184,10 @@
     .caption:hover {
         opacity: 1;
         color: gold;
+    }
+
+    a {
+        font-weight: bold;
+        color: gold;
+
     }
