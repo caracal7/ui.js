@@ -645,7 +645,7 @@ var toTree_default = toTree;
 
 // src/eue/TinyAnimate.js
 var exports = {};
-exports.animate = function(from, to, duration, update, easing, done) {
+exports.animate = function(from, to, duration, update, easing, done, element) {
   if (typeof from !== "number" || typeof to !== "number" || typeof duration !== "number" || typeof update !== "function")
     return;
   if (typeof easing === "string" && easings[easing])
@@ -669,7 +669,7 @@ exports.animate = function(from, to, duration, update, easing, done) {
     }
     if (time >= 0 && time >= duration) {
       update(to);
-      done();
+      done(element, to);
     } else {
       rAF(loop);
     }
@@ -911,6 +911,7 @@ function animateAttr(element, key, v) {
   var from = void 0;
   var ease = "linear";
   var fn = void 0;
+  var done = void 0;
   if (typeof v === "object") {
     var duration = v.duration || defaultAnimationOpts.duration;
     var to = v.to;
@@ -918,7 +919,9 @@ function animateAttr(element, key, v) {
       ease = v.ease;
     if (v.fn)
       fn = v.fn;
-    if (v.from)
+    if (v.done)
+      done = v.done;
+    if (v.from !== void 0)
       from = v.from;
   } else {
     var duration = defaultAnimationOpts.duration;
@@ -931,11 +934,11 @@ function animateAttr(element, key, v) {
     from = ((_a = element._attrs[key]) == null ? void 0 : _a.last) || 0;
     element._attrs[key] = TinyAnimate_default.animate(from, to, duration, (x) => {
       element.setAttribute(key, fn(x));
-    }, ease);
+    }, ease, done, element);
   } else {
     element._attrs[key] = TinyAnimate_default.animate(from, to, duration, (x) => {
       element.setAttribute(key, x);
-    }, ease);
+    }, ease, done, element);
   }
 }
 function animateColor(element, key, v) {
@@ -973,6 +976,7 @@ function animateCSS(element, key, v) {
     return;
   }
   var ease = "linear";
+  var done = void 0;
   var from = void 0;
   var threshold = 0;
   var unit = "";
@@ -988,13 +992,15 @@ function animateCSS(element, key, v) {
     }
     var duration = v.duration || defaultAnimationOpts.duration;
     var to = v.to;
-    if (v.from)
+    if (v.from !== void 0)
       from = v.from;
-    if (v.default)
+    if (v.default !== void 0)
       _default = v.default;
     if (v.ease)
       ease = v.ease;
-    if (v.threshold)
+    if (v.done)
+      done = v.done;
+    if (v.threshold !== void 0)
       threshold = v.threshold;
     if (v.fn)
       fn = v.fn;
@@ -1034,11 +1040,11 @@ function animateCSS(element, key, v) {
   if (fn) {
     element._styles[key] = TinyAnimate_default.animate(from, to, duration, (x) => {
       element.style.setProperty(key, fn(x + unit));
-    }, ease);
+    }, ease, done, element);
   } else {
     element._styles[key] = TinyAnimate_default.animate(from, to, duration, (x) => {
       element.style.setProperty(key, x + unit);
-    }, ease);
+    }, ease, done, element);
   }
 }
 
@@ -2452,6 +2458,13 @@ var baseClassMixin = (superclass) => class baseClass extends superclass {
   initialize() {
     this.component = this.initial_component;
     this.animate = TinyAnimate_default.animate;
+    this.animateCSS = (property, { element, unit, from, to, duration, easing, done }) => {
+      element._styles[property] = TinyAnimate_default.animateCSS(element || this, property, unit === void 0 ? "" : unit, from || 0, to, duration || 1e3, easing, () => {
+        element._styleV[property] = to + unit;
+        if (done)
+          done();
+      });
+    };
     this.Spring = Spring;
     toProto(this.component);
     this.window_events = {};
@@ -7908,7 +7921,7 @@ async function processScripts() {
 }
 
 // src/index.js
-var VERSION = "0.6.48-dev";
+var VERSION = "0.6.50-dev";
 !VERSION.endsWith("-dev") && console.log(`ui.js \u2764\uFE0F  ${VERSION} alpha experiment. Make DOM great again!`);
 var iJS = {
   VERSION,

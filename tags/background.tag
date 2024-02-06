@@ -1,9 +1,12 @@
 <!tag @shadertoy ../examples/examples/demo/shadertoy/shadertoy>
 
-<@shadertoy fragment=`
+<@shadertoy enter{
+    opacity: { from: 0, to: 1, duration: 2000 }
+}
+fragment=`
 //  https://www.shadertoy.com/view/MsdSWl
 const float PI = 3.1415926535;
-const float flipTime  = 2.;
+const float flipTime  = 6.;
 
 vec2 tileDims = vec2(3.0,3.0); //number of rows ,columns
 

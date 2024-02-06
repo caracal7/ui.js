@@ -246,6 +246,8 @@
             }
 
             async connected() {
+                // wait 0,5 sec while animation is done before load example
+                await new Promise(r => setTimeout(r, 500));
                 this.state.selected_example = this.findExample(...splitLast(this.state.default, '/'));
                 await this.loadExample(this.state.selected_example);
             }

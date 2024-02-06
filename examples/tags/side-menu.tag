@@ -1,4 +1,6 @@
-<aside>
+<aside enter{
+    left: { from: '-100px', to: '0px', duration: 500, ease: 'easeOutQuint' }
+}>
 
     <h2><a href='../index.html'>ui.js</a> by example</h2>
 
@@ -47,7 +49,9 @@
         </li>
     </ul>
 </aside>
-<main>
+<main enter{
+    opacity: { from: 0, to: 1, duration: 500 }
+}>
     <slot/>
 </main>
 

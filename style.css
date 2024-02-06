@@ -12,7 +12,8 @@ html, body {
     min-height: 100%;
     padding: 0;
     margin: 0;
-    background: white;
+    background: black;
+    overflow: hidden;
 }
 
 nav {
@@ -22,8 +23,8 @@ nav {
     left: calc(50% - 250px);
 }
 
-nav a, footer {
-    color:white;
+nav a, footer, footer a {
+    color: white;
 }
 
 footer {
@@ -31,4 +32,6 @@ footer {
     position:absolute;
     bottom:20px;
     right: 50px;
+    font-style: italic;
+    opacity: 0.5;
 }
