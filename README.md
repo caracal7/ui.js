@@ -5,6 +5,34 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 
 Time is money. <a href="https://en.wikipedia.org/wiki/Time_to_market">Time to market</a> is the way to money. We don’t have the money to lose our time with slow dev tools.☝️ 🙂
 
+HTML, CSS and JavaScript are great technologies, but they are too different and general-purpose. And since you need all of these technologies to develop user interfaces, you need an intermediate layer to link them together.
+
+There are many solutions for this task, such as React, Vue, Angular, Svelte, etc. But most of them are either constrained by trying to extend HTML syntax and inherit its limitations, or offer a complex build process not possible on the fly, or offer a syntax too far from the underlying technologies.
+
+ui.js offers a slightly different way of looking at interface development, allowing for much simpler and faster interface development.
+
+# Philosophy and Zen of <b style="color:#42a425">ui.js</b>
+
+- **Develop faster**. No dev server, no bundler, no toolchain, no bootstrap template. Starts up in 0 ms 🔥
+- Declare new components right inside HTML. Try any ideas right now! 🤘
+- No need for any other dependencies for building UI
+- Use blazing fast virtual DOM over native Web Components
+- True reactive 2-ways state exchange between components
+- Concise syntax as close to HTML/CSS/JavaScript as possible
+- Less superfluous language constructions to solve common tasks
+- Unleash the power of WASM in JavaScript manner
+
+**ui.js** aims to provide a tool for development and application architecture out of the box.
+
+It empowers an effortless creation of highly scalable and easily maintainable applications without Babel transpiler, Parcel, Webpack and any complicated toolchain.
+
+All you need is **ui.js** and a modern browser with <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements">customElements</a> support (AD 2020+).
+
+
+# Why development with ui.js is faster?
+
+Take a look at two simple examples and what can be implemented with a minimum of code.
+
 ## To Do list in 10 LOC
 
 <to-do></to-do>
@@ -101,31 +129,18 @@ Modern state-of-art user interfaces are always animated. So why shouldn't state 
 </html>
 ```
 
-# Philosophy and Zen of <b style="color:#42a425">ui.js</b>
 
-- **Develop faster**. No dev server, no bundler, no toolchain, no bootstrap template. Starts up in 0 ms 🔥
-- Declare new components right inside HTML. Try any ideas right now! 🤘
-- No need for any other dependencies for building UI
-- Use blazing fast virtual DOM over native Web Components
-- True reactive 2-ways state exchange between components
-- Concise syntax as close to HTML/CSS/JavaScript as possible
-- Less superfluous language constructions to solve common tasks
-- Unleash the power of WASM in JavaScript manner
-
-**ui.js** aims to provide a tool for development and application architecture out of the box.
-
-It empowers an effortless creation of highly scalable and easily maintainable applications without Babel transpiler, Parcel, Webpack and any complicated toolchain.
-
-All you need is **ui.js** and a modern browser with <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements">customElements</a> support (AD 2020+).
 
 
 # Getting started
 
-> **ui.js** at moment is a **Proof of Concept** and in the process of being rewritten to the current DSL syntax and will be moved to new renderer. Many functions are not yet ported over from the previous version.
+> **ui.js** is currently a **Proof of Concept** and it is in the process of being rewritten, but it is quite stable. Many functions are not yet ported over from the previous version.
 
-**<b style="color:red">Do not use</b> in production until v.0.7 will be released**
+**Warning 🚧:**
 
-**i.js** v0.6.50 pre-alpha
+**Please <b style="color:red">be careful</b> if you're using this project in production**. Is still in development, it might have bugs and breaking changes.
+
+**ui.js** v0.6.50 pre-alpha
 
 - [ui.js](../dist/ui.js) - IIFE (Default)
 - [ui.esm.js](../dist/ui.esm.js) - ES module
@@ -140,6 +155,9 @@ You should be familiar with major modern yet fundamental web technologies  🤗
 - JavaScript ES2018+ - application logic</li>
 
 If you are not... Well, it is still possible but your way would not be an easy one and your components would be ugly 💩
+
+
+
 
 
 ## Hello world

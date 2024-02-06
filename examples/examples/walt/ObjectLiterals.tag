@@ -5,7 +5,7 @@
     console.log(
         this.walt.test()
     );
-}>test()</button>
+}>Run this.walt.test()</button>
 
 <!walt>
     // Memory is required. This could also be imported

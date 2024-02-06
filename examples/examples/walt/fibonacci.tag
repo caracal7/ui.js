@@ -1,4 +1,4 @@
-<p enter{ opacity: { to: 1 } }>
+<p enter{ opacity: { to: 1 } } style{ padding: '10px' }>
     <h2>Naive fibonacci - WASM vs JavaScript</h2>
 
     <blockquote>Close console for max perfomance. Less is better!</blockquote>
