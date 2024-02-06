@@ -100,6 +100,8 @@
         transform: rotate(-90deg);
     }
 
+
+
     @media only screen and (min-width: 1000px) {
     	:host > b {
             left: calc(15% - 160px);
@@ -138,6 +140,13 @@
         }
     }
 
+    @media only screen and (max-width: 600px) {
+    	main {
+            width: 100%;
+            height: 100%;
+            border: 4px solid white;
+        }
+    }
     header {
         position: absolute;
         top: 0;
@@ -145,6 +154,13 @@
         height: calc(100% - var(--footer-height));
         overflow: auto;
         padding: 10px;
+        font-size: 14px;
+    }
+
+    @media only screen and (max-width: 600px) {
+    	header {
+            font-size: 11px;
+        }
     }
 
     footer {

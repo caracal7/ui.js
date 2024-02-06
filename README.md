@@ -869,12 +869,12 @@ Top level properties of the `this.state` object will be observed and accessible 
             <input type="radio" id="contact3" name="contact" value="mail" %checked=state.radio>
             <label for="contact3">Mail</label>
 
-            <button @click({ state.radio = 'mail' })>mail</button>
+            <button @click{ state.radio = 'mail' }>mail</button>
 
         <h3>Textarea</h3>
             <textarea rows="10" cols="45" %value=state.text/>
             <br>
-            <button @click({ state.text = 'Hey ui.js' })>Set text</button>
+            <button @click{ state.text = 'Hey ui.js' }>Set text</button>
             <p text(state.text)/>
 
         <h3>Range</h3>
