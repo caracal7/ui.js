@@ -1,6 +1,14 @@
-<aside enter{
-    left: { from: '-100px', to: '0px', duration: 500, ease: 'easeOutQuint' }
-}>
+<main class=(!state.big && 'small')>
+    <slot/>
+</main>
+
+
+<div class='button' if(!state.big) @click{ state.opened = true }>☰</div>
+
+<aside if(state.big || state.opened)
+    enter{
+        left: { from: '-100px', to: '0px', duration: 500, ease: 'easeOutQuint' }
+    }>
 
     <h2><a href='../index.html'>ui.js</a> by example</h2>
 
@@ -49,18 +57,31 @@
         </li>
     </ul>
 </aside>
-<main enter{
-    opacity: { from: 0, to: 1, duration: 500 }
-}>
-    <slot/>
-</main>
+
+
 
 <!state>
     category: '',
     category2: '',
     example: '',
     example2: '',
-    menu: []
+    menu: [],
+    big: true,
+    opened: false,
+
+<!class>
+    connected() {
+        console.log('connected')
+        const resize = () => {
+            const mq = window.matchMedia( "(min-width: 600px)" );
+            this.state.big = mq.matches;
+            this.state.opened = false;
+            this.render();
+        };
+
+        this.on('resize', resize);
+        resize();
+    }
 
 <!style>
 
@@ -105,6 +126,21 @@
         border-top: 6px solid white;
     }
 
+    .button {
+        position: absolute;
+        bottom:0px;
+        left:0px;
+        width:40px;
+        height:40px;
+        cursor: pointer;
+        background: black;
+        border: 3px solid gold;
+        border-radius: 8px;
+        color: gold;
+        font-size:30px;
+        line-height: 40px;
+        text-align: center;
+    }
 
     aside {
         color: white;
@@ -116,6 +152,17 @@
         user-select: none;
         -webkit-user-select: none;
         overflow-y: auto;
+
+        -ms-overflow-style: none;
+        scrollbar-color: transparent transparent; /*just hides the scrollbar for firefox */
+        scrollbar-width: none;
+    }
+
+    aside::-webkit-scrollbar {
+        display: none;
+    }
+    aside::-moz-scrollbar {
+        display: none;
     }
 
     main {
@@ -125,6 +172,10 @@
         position: absolute;
         right: 0;
         top: 0;
+    }
+
+    main.small {
+        width: 100%;
     }
 
     header {

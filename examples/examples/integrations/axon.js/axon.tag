@@ -4,6 +4,10 @@
 <!css ../../../assets/button.css>
 
 
+<@window caption='About' left='230px' width='700px' height='500px' top='20px'>
+    <iframe src='https://axon.js.org'/>
+</@window>
+
 
 <@window caption='Controls' width='300px' height='335px' left='10px' top='130px' padding='10px' resize=false>
     <h3>Key</h3> <input %value=state.key>
@@ -19,7 +23,7 @@
     <br> <button @click{
         this.axon[this.state.key] = this.axon().fnFromString(this.state.value);
         this.$('#debug').refresh();
-    } text('Set as function') style{background:'blue'}/>
+    } text('Set as reactive function') style{background:'blue'}/>
 
     <br> <button @click{
         delete this.axon[this.state.key];
@@ -28,8 +32,11 @@
 
 </@window>
 
-<@window caption='Axon graph view' left='330px' width='700px' height='500px' top='40px'>
-    <@axon-debug id='debug' axon=this.axon/>
+<@window caption='Axon graph debug' left='330px' width='700px' height='500px' top='40px'>
+    <@axon-debug id='debug' axon=this.axon @select{
+        state.key = event.detail.key;
+        state.value = event.detail.function ? this.axon().fnFromString(event.detail.function) : "";
+    }/>
 </@window>
 
 <!style>
@@ -51,6 +58,11 @@
         background: #eeffff;
         padding: 5px 10px;
         margin: 5px 0!important;
+    }
+    iframe {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
     }
 
 <!state>

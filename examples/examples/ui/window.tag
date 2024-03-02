@@ -3,13 +3,15 @@
 <div class="TWindow">
     <div class="TBody" @mousedown=setActive @touchstart=setActive><slot/></div>
     <div class="THeader"
-        @mousedown{ this.startAction(event, "move") }
-        @touchstar{ this.startAction(event, "move") }
+        @mousedown=this.startAction(event, "move")
+        @touchstar=this.startAction(event, "move")
         text(state.caption)
     />
     <div class="TMoveText" if(state.action == "move") text(this.removePX(state.left)+'x'+this.removePX(state.top))/>
     <div if(state.resize && state.action == "resize") class="TResizeText" text(this.removePX(state.width)+'x'+this.removePX(state.height))/>
-    <div if(state.resize) class="TResizeCorner"
+    <div if(state.close)   class="TCloseButton"  @click{ this.emit('close') }/>
+    <div if(state.submit)  class="TSubmitButton" @click{ this.emit('submit') }/>
+    <div if(state.resize)  class="TResizeCorner"
         @mousedown{ this.startAction(event, "resize") }
         @touchstart{ this.startAction(event, "resize") }
     ></div>
@@ -44,23 +46,23 @@
         this.minHeight = 40;
 
         Object.entries({
-            header: '20px',
-            caption: 'Untitled',
-            width: '300px',
-            height: '150px',
-            left: 'auto',
-            right: 'auto',
-            top: 'auto',
-            bottom: 'auto',
+            header:     '20px',
+            caption:    'Untitled',
+            width:      '300px',
+            height:     '150px',
+            left:       'auto',
+            right:      'auto',
+            top:        'auto',
+            bottom:     'auto',
             background: 'white',
-            overflow: 'hidden',
-            padding: 'inherit'
+            overflow:   'hidden',
+            padding:    'inherit'
         }).map(([ key, value]) => this.state[key] = this.getAttribute(key) || value);
 
         this.state.resize = !['false', false, undefined].includes(this.getAttribute('resize'));
 
         if(this.state.left === 'auto' && this.state.right === 'auto') this.state.left = '0px';
-        if(this.state.top === 'auto' && this.state.bottom === 'auto') this.state.top = '0px';
+        if(this.state.top  === 'auto' && this.state.bottom === 'auto') this.state.top = '0px';
 
         this.mouse = { action: undefined, x: undefined, y: undefined };
 
@@ -73,10 +75,14 @@
     }
 
     connected() {
+        this.state.close   = this.hasEventHandler('close');
+        this.state.submit  = this.hasEventHandler('submit');
+        this.render();
+
         this.on('mousemove', this.mouseMove);
         this.on('touchmove', this.touchMove);
-        this.on('mouseup', this.mouseUp);
-        this.on('touchend', this.mouseUp);
+        this.on('mouseup',   this.mouseUp);
+        this.on('touchend',  this.mouseUp);
         this.setActive();
     }
 
@@ -110,23 +116,23 @@
     }
 
     resizeWindow(dx, dy) {
-        let width = this.removePX(this.state.width) - dx;
+        let width  = this.removePX(this.state.width) - dx;
         let height = this.removePX(this.state.height) - dy;
         const left = this.removePX(this.state.left);
-        const top = this.removePX(this.state.top);
-        if(width < this.minWidth) width = this.minWidth;
+        const top  = this.removePX(this.state.top);
+        if(width  < this.minWidth)  width  = this.minWidth;
         if(height < this.minHeight) height = this.minHeight;
-        if(left + width > document.documentElement.clientWidth) width = document.documentElement.clientWidth - left;
+        if(left + width > document.documentElement.clientWidth)  width  = document.documentElement.clientWidth - left;
         if(top + height > document.documentElement.clientHeight) height = document.documentElement.clientHeight - top;
-        this.state.width = width + 'px';
+        this.state.width  = width  + 'px';
         this.state.height = height + 'px';
         this.render();
     }
 
     moveWindow(dx, dy) {
-        const width = this.removePX(this.state.width);
+        const width  = this.removePX(this.state.width);
         const height = this.removePX(this.state.height);
-        const rightMargin = document.documentElement.clientWidth;
+        const rightMargin  = document.documentElement.clientWidth;
         const bottomMargin = document.documentElement.clientHeight;
         if(this.state.left != 'auto') {
             let left = this.removePX(this.state.left) - dx;
@@ -156,6 +162,7 @@
 <!style>
     :host {
         position: absolute;
+        top: 0;
     }
     .TWindow {
         position:               absolute;
@@ -244,43 +251,43 @@
         cursor:                 move;
     }
 
-    .THeader  > .TCloseButton {
+    .TCloseButton {
         position:                 absolute;
         box-sizing:               border-box;
         -webkit-user-select:      none;
         user-select:              none;
         pointer-events:           all;
-        width:                    16px;
-        height:                   16px;
-        top:                      2px;
-        right:                    3px;
+        width:                    14px;
+        height:                   14px;
+        top:                      3px;
+        right:                    4px;
         background-image:         linear-gradient(to bottom, #dd3333 0%, #ff5555 100%);
         cursor:                   pointer;
         border:                   1px solid rgba(0, 0, 0, 0.5);
         border-radius:            8px;
     }
 
-    .THeader  > .TCloseButton:hover {
+    .TCloseButton:hover {
         background-image:         linear-gradient(to bottom, #f26767 0%, #ff8888 100%);
     }
 
 
-    .THeader  > .TRefreshButton {
+    .TSubmitButton {
         position:                 absolute;
         box-sizing:               border-box;
         -webkit-user-select:      none;
         user-select:              none;
         pointer-events:           all;
-        width:                    16px;
-        height:                   16px;
-        top:                      2px;
-        right:                    22px;
+        width:                    14px;
+        height:                   14px;
+        top:                      3px;
+        right:                    24px;
         background-image:         linear-gradient(to bottom, #c0dd33 0%, #f1ff55 100%);
         cursor:                   pointer;
         border:                   1px solid rgba(0, 0, 0, 0.5);
         border-radius:            8px;
     }
 
-    .THeader  > .TRefreshButton:hover {
+    .TSubmitButton:hover {
         background-image:         linear-gradient(to bottom, #d9f25e 0%, #f8ffaf 100%);
     }

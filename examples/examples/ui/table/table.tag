@@ -12,6 +12,7 @@
 <tr loop(state.data as datum | d => d.id)
 	class=(state.selected && state.selected.id === datum.id && "selected")
 	@click{
+		if(!state.canSelect) return;
 		state.selected = state.selected && state.selected.id === datum.id ? undefined : state.data.find(d => d.id == datum.id);
 		this.emit('select', state.selected);
 	}>
@@ -87,7 +88,8 @@
 <!state>
 	data: [],
 	columns: [],
-	selected: undefined
+	selected: undefined,
+	canSelect: true,
 
 <!style>
 

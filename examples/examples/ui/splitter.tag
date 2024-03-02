@@ -51,6 +51,7 @@
 	                var pane1Size = Math.round(Math.min(Math.max(event.clientY - pane1Pos_1, pane1MinSize_1), pane1MaxSize_1));
 	                pane1.style.height = pane1Size + 'px';
 	                pane2.style.height = totalSize_1 - pane1Size + 'px';
+					window.dispatchEvent(new Event('resize'));
 	            }
 	        };
 	    }
@@ -64,6 +65,7 @@
 	                var pane1Size = Math.round(Math.min(Math.max(event.clientX - pane1Pos_2, pane1MinSize_2), pane1MaxSize_2));
 	                pane1.style.width = pane1Size + 'px';
 	                pane2.style.width = totalSize_2 - pane1Size + 'px';
+					window.dispatchEvent(new Event('resize'));
 	            }
 	        };
 	    }
@@ -72,22 +74,22 @@
 	        if (event.pointerId === pointerId) {
 	            separator.releasePointerCapture(pointerId);
 	            separator.removeEventListener('pointercancel', onPointerUp);
-	            separator.removeEventListener('pointermove', onPointerMove);
-	            separator.removeEventListener('pointerup', onPointerUp);
+	            separator.removeEventListener('pointermove',   onPointerMove);
+	            separator.removeEventListener('pointerup',     onPointerUp);
 	        }
 	    };
 	    onPointerMove(pointerDownEvent);
 	    pane1.style.flexShrink = pane2.style.flexShrink = 1;
 	    separator.addEventListener('pointercancel', onPointerUp);
-	    separator.addEventListener('pointermove', onPointerMove);
-	    separator.addEventListener('pointerup', onPointerUp);
+	    separator.addEventListener('pointermove',   onPointerMove);
+	    separator.addEventListener('pointerup',     onPointerUp);
 	    separator.setPointerCapture(pointerId);
 	}
 
 
 <!class>
 
-   /* Based on https://github.com/luncheon/flex-splitter-directive */
+    /* Based on https://github.com/luncheon/flex-splitter-directive */
     init() {
         this.AddAttributes = true;
 		this.eventsIsSet = false;

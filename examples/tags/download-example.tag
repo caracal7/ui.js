@@ -119,8 +119,6 @@ Have a nice coding :)
 
 
     async click() {
-        //console.log('example', this.state.example);
-
         const ui = await (await fetch('../dist/ui.js')).text();
 
         const caption = this.state.example.caption;
@@ -130,10 +128,9 @@ Have a nice coding :)
 
         //  replace relational links
         this.state.example.urls.forEach((url, i) => {
-            if(url.includes('/')) { // && (url.endsWith('.tag') || url.endsWith('.html'))
+            if(url.includes('/')) {
                 const new_name = url.slice(url.lastIndexOf('/') + 1);
                 const escaped = url.split('.').join('\\.').split('/').join('\\/');
-                //console.info(url, new_name, escaped);
 
                 this.state.example.sources.forEach((src, k) => {
                     if(k == i) return;
@@ -168,13 +165,16 @@ Have a nice coding :)
 
 
         const processExternal = async (i, url, _path) => {
-            var src = (await (await fetch('examples/' + this.state.example.base + '/' + url).catch(e => false)).text()).trim();
+            if(url.endsWith('.jpg') || url.endsWith('.png')) {
+                var src = await (await fetch('examples/' + this.state.example.base + '/' + url).catch(e => false)).blob();
+            } else {
+                var src = (await (await fetch('examples/' + this.state.example.base + '/' + url).catch(e => false)).text()).trim();
+            }
 
             const new_name = _path + '/' + url.slice(url.lastIndexOf('/') + 1);
             const escaped  = url.split('.').join('\\.').split('/').join('\\/');
-            //console.log('externals', i, url, new_name, escaped);
 
-            this.state.example.sources.forEach((src, k) => {
+            if(typeof src === 'string') this.state.example.sources.forEach((src, k) => {
                 if(new_name.endsWith('.css'))
                     this.state.example.sources[k] = src.replace(new RegExp("(^\\s*<!css\\s+)("+escaped+"\\s*)(>\\s*$)",'im'), `$1${new_name}$3`);
 
@@ -186,7 +186,7 @@ Have a nice coding :)
             });
 
             files.push({
-                file: String2Blob(src),
+                file: typeof src === 'string' ? String2Blob(src) : src,
                 pathname: new_name
             });
         }
@@ -228,7 +228,6 @@ Have a nice coding :)
 
         //console.log(files);
 
-        //return;
 
         const archiveFile = await Archive.write({
             files,

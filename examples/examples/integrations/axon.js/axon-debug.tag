@@ -1,6 +1,8 @@
 <!tag @table ../../ui/table/table.tag>
 
-<@table data=state.data columns=state.columns/>
+<@table data=state.data columns=state.columns @select{
+    this.emit('select', event.detail)
+}/>
 
 <!state>
     columns: [
@@ -24,6 +26,7 @@
         const vars = [...new Set([...Object.keys(axon.state), ...Object.keys(axon.functions)])]; // !!! scripts
 
         vars.forEach(key => data.push({
+            id: key,
             key,
             value: !!axon.state.hasOwnProperty(key) ? JSON.stringify(this.state.axon[key]) : '',
             state: !!axon.state.hasOwnProperty(key),

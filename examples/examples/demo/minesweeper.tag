@@ -1,4 +1,3 @@
-
 <section loop(state.field as row, y | d => d[0].y)>
     <div loop(row as cell, x | d => d.x)
         enter{
@@ -38,6 +37,7 @@
             }/>
     </div>
 </section>
+
 <aside if(['lose', 'win'].includes(state.state)) text('You ' + state.state) @click=reset
     style{
         width: length * 30 + 'px',
@@ -105,7 +105,11 @@
     }
 
     connected() {
+        console.log('connected')
+
         this.reset();
+
+                console.log(this.state)
     }
 
 

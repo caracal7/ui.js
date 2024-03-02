@@ -1,4 +1,4 @@
-<!import * as ogl from 'ogl.esm.js'>
+<!import * as ogl from ogl.esm.js>
 
 <!state>
     slow: false
@@ -16,9 +16,7 @@
 
         const resize = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.perspective({
-                aspect: gl.canvas.width / gl.canvas.height,
-            });
+            camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
         }
 
         this.on('resize', resize);

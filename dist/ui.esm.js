@@ -843,6 +843,10 @@ easings.easeInOutBounce = function(t, b, c, d) {
 };
 var TinyAnimate_default = exports;
 
+// src/tags.js
+var tags = {};
+var tags_default = tags;
+
 // src/eue/utils.js
 var defaultAnimationOpts = {
   duration: 500
@@ -858,8 +862,10 @@ function splice(arr, a, b) {
   }
   arr[b] = tmp;
 }
-function createElement(tag) {
-  if (tag.svg) {
+function createElement(tag, parent) {
+  if (typeof tags_default[tag.tag] == "function") {
+    var element = new tags_default[tag.tag](parent, tag);
+  } else if (tag.svg) {
     var element = document.createElementNS("http://www.w3.org/2000/svg", tag.tag);
   } else {
     var element = document.createElement(tag.tag);
@@ -867,20 +873,41 @@ function createElement(tag) {
   Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
   return element;
 }
-var createElementHTML = (name) => `
-    var element = document.createElement("${name}");
-    Object.assign(element, {_attrs:{},_styles:{},_attrsV:{},_styleV:{}, _colors:{}, _events:{}});
-`;
-var createElementSVG = (name) => `
-    var element = document.createElementNS("http://www.w3.org/2000/svg", "${name}");
-    Object.assign(element, {_attrs:{},_styles:{},_attrsV:{},_styleV:{}, _colors:{}, _events:{}});
-`;
+function insertElement(container, element, prevElement) {
+  if (!element._BASE_ELEMENT) {
+    if (prevElement) {
+      prevElement.after(element);
+    } else {
+      container.prepend(element);
+    }
+    ;
+  } else {
+    if (prevElement) {
+      container._childNodes.splice(
+        container._childNodes.findIndex((x) => x === prevElement) + 1,
+        0,
+        element
+      );
+    } else {
+      container._childNodes.unshift(element);
+    }
+    ;
+  }
+}
+function prependElement(container, element) {
+  if (!element._BASE_ELEMENT) {
+    container.prepend(element);
+  } else {
+    container._childNodes.unshift(element);
+  }
+}
 function animateAttr(element, key, v) {
   var _a;
   var from = void 0;
   var ease = "linear";
   var fn = void 0;
   var done = void 0;
+  var _default = void 0;
   if (typeof v === "object") {
     var duration = v.duration || defaultAnimationOpts.duration;
     var to = v.to;
@@ -892,12 +919,16 @@ function animateAttr(element, key, v) {
       done = v.done;
     if (v.from !== void 0)
       from = v.from;
+    if (v.default !== void 0)
+      _default = v.default;
   } else {
     var duration = defaultAnimationOpts.duration;
     var to = v;
   }
-  if (from === void 0)
-    from = element.getAttribute(key) ? Number(element.getAttribute(key)) : 0;
+  if (from === void 0) {
+    var _from = element.__rendererName ? element.state[key] : element.getAttribute(key);
+    from = _from === void 0 || _from === null ? _default ? _default : 0 : Number(_from);
+  }
   TinyAnimate_default.cancel(element._attrs[key]);
   if (fn) {
     from = ((_a = element._attrs[key]) == null ? void 0 : _a.last) || 0;
@@ -924,17 +955,32 @@ function animateColor(element, key, v) {
     var duration = defaultAnimationOpts.duration;
     var to = v;
   }
-  element._colors[key] = { key, duration, ease, delay };
-  setTimeout(() => {
+  element._colors[key] = key + " " + duration + "ms " + ease + " " + delay + "ms";
+  clearTimeout(element._styles[key]);
+  element._styles[key] = setTimeout(() => {
     delete element._colors[key];
-    var transition2 = Object.values(element._colors).map((c) => c.key + " " + c.duration + "ms " + c.ease + " " + c.delay + "ms").join(",");
-    element.style.setProperty("transition", transition2 || "none");
+    var transition2 = Object.values(element._colors).join(",");
+    if (element._transition != transition2) {
+      element._transition = transition2;
+      if (element._transition)
+        element.style.setProperty("transition", element._transition);
+      else
+        element.style.removeProperty("transition");
+    }
   }, duration + delay);
-  var transition = Object.values(element._colors).map((c) => c.key + " " + c.duration + "ms " + c.ease + " " + c.delay + "ms").join(",");
-  element.style.setProperty("transition", transition || "none");
+  var transition = Object.values(element._colors).join(",");
+  if (element._transition != transition) {
+    element._transition = transition;
+    if (element._transition)
+      element.style.setProperty("transition", element._transition);
+    else
+      element.style.removeProperty("transition");
+  }
+  ;
   if (!element.style.getPropertyValue(key)) {
     element.style.setProperty(key, "#000000");
   }
+  element.style.setProperty(key, getComputedStyle(element)[key]);
   setTimeout(() => {
     element.style.setProperty(key, to);
   }, 0);
@@ -1036,14 +1082,16 @@ function isBooleanAttr(tag, key) {
 
 // src/eue/EXIT.js
 function Exit_Attrs_Logic(element, tag, state, key, value) {
-  var v = value;
-  animateAttr(element, key, v);
-  return typeof v === "object" && v.duration ? v.duration : defaultAnimationOpts.duration;
+  if (typeof value !== "object") {
+    element.setAttribute(key, value);
+    return defaultAnimationOpts.duration;
+  }
+  animateAttr(element, key, value);
+  return value.duration ? value.duration : defaultAnimationOpts.duration;
 }
 function Exit_Styles_Logic(element, tag, state, key, value) {
-  var v = value;
-  animateCSS(element, key, v);
-  return typeof v === "object" && v.duration ? v.duration : defaultAnimationOpts.duration;
+  animateCSS(element, key, value);
+  return value.duration ? value.duration : defaultAnimationOpts.duration;
 }
 function Exit_Loop_Element(element, tag, state, key, __i__, container) {
   var maxStyle = 0, maxAttrs = 0;
@@ -1065,9 +1113,10 @@ function Exit_Loop_Element(element, tag, state, key, __i__, container) {
       );
     }
   }
+  element.isExit = true;
   if (maxStyle > 0 || maxAttrs > 0) {
     const timeout = setTimeout(() => container.Done.then(() => {
-      element.remove();
+      removeElement(element);
       __i__.exit.delete(key);
     }), maxStyle > maxAttrs ? maxStyle : maxAttrs);
     __i__.exit.set(key, {
@@ -1076,7 +1125,8 @@ function Exit_Loop_Element(element, tag, state, key, __i__, container) {
     });
     return;
   }
-  element.remove();
+  clearTimeout(__i__.exit[key]);
+  removeElement(element);
 }
 function Exit_Single(element, tag, state, container, index) {
   var maxStyle = 0, maxAttrs = 0;
@@ -1098,19 +1148,45 @@ function Exit_Single(element, tag, state, container, index) {
       );
     }
   }
+  element.isExit = true;
   if (maxStyle > 0 || maxAttrs > 0) {
     const timeout = setTimeout(() => container.Done.then(() => {
-      element.remove();
       container.__i__[index] = false;
+      removeElement(element);
     }), maxStyle > maxAttrs ? maxStyle : maxAttrs);
     container.__i__[index] = {
       exit: timeout
     };
     return false;
   }
+  clearTimeout(container.__i__[index]);
   container.__i__[index] = false;
-  element.remove();
+  removeElement(element);
   return true;
+}
+async function removeElement(element) {
+  if (element.nodeName === "#text") {
+    console.log("TEXT");
+    return;
+  }
+  if (element.__i__)
+    for (const obj of Object.values(element.__i__)) {
+      clearTimeout(obj.exit);
+    }
+  for (const obj of Object.values(element._attrs)) {
+    if (obj == null ? void 0 : obj.cancel)
+      obj.cancel();
+  }
+  for (const obj of Object.values(element._styles)) {
+    if (obj == null ? void 0 : obj.cancel)
+      obj.cancel();
+  }
+  const childNodes = element.__rendererName ? element.document._childNodes : element.children;
+  while (childNodes.length) {
+    const child = childNodes[childNodes.length - 1];
+    await removeElement(child);
+  }
+  await element.remove();
 }
 
 // src/eue/UPDATE.js
@@ -1134,15 +1210,16 @@ function Update_Keyed_Loop(tag, container, prevElement, _state, __i__, index, da
         if (___exit) {
           clearTimeout(___exit.timeout);
           var element = ___exit.element;
+          delete element.isExit;
           tag.svg || (element.className = "");
           exit.delete(new_key);
         } else {
-          var element = createElement(tag);
+          var element = createElement(tag, container);
         }
         _state[tag.loop_alias] = data[x];
         if (tag.loop_key_alias)
           _state[tag.loop_key_alias] = x;
-        Enter_Light(element, tag, _state, GLOBALS_default);
+        Enter_Light(element, tag, _state, GLOBALS_default, ___exit);
         if (x === 0) {
           if (exit.size) {
             for (let entry of exit) {
@@ -1153,7 +1230,7 @@ function Update_Keyed_Loop(tag, container, prevElement, _state, __i__, index, da
             if (prevElement) {
               prevElement.after(element);
             } else {
-              container.prepend(element);
+              prependElement(container, element);
             }
           }
         } else
@@ -1235,20 +1312,21 @@ function Update_Keyed_Loop(tag, container, prevElement, _state, __i__, index, da
             if (___exit) {
               clearTimeout(___exit.timeout);
               element = ___exit.element;
+              delete element.isExit;
               tag.svg || (element.className = "");
               exit.delete(new_key);
             } else {
-              var element = createElement(tag);
+              var element = createElement(tag, container);
             }
             _state[tag.loop_alias] = data[x];
             if (tag.loop_key_alias)
               _state[tag.loop_key_alias] = x;
-            Enter_Light(element, tag, _state, GLOBALS_default);
+            Enter_Light(element, tag, _state, GLOBALS_default, ___exit);
             if (x === 0) {
               if (prevElement) {
                 prevElement.after(element);
               } else {
-                container.prepend(element);
+                prependElement(container, element);
               }
             } else {
               elements[x - 1].after(element);
@@ -1285,6 +1363,11 @@ function getFns() {
     },
     fn_text: function(element, tag, state, GLOBALS2) {
       var text = tag.text(state);
+      if (!element) {
+        console.log("NOT element.__lastText", element);
+        console.trace();
+        return;
+      }
       if (element.__lastText !== text) {
         element.textContent = element.__lastText = text;
       }
@@ -1327,7 +1410,12 @@ function Update_Tag(tag) {
   return fns;
 }
 function U_SINGLE(container, tag, state, index, childIndex, __i__) {
-  tag.Update_Tag(container.childNodes[childIndex], tag, state, GLOBALS_default);
+  tag.Update_Tag(
+    container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex],
+    tag,
+    state,
+    GLOBALS_default
+  );
   return childIndex + 1;
 }
 function U_LOOP(container, tag, state, index, childIndex, __i__) {
@@ -1341,7 +1429,7 @@ function U_LOOP(container, tag, state, index, childIndex, __i__) {
           tag.enter(tag, container, void 0, state, index, data, GLOBALS_default);
           return childIndex + container.__i__[index].length;
         } else {
-          tag.enter(tag, container, childIndex === 0 ? void 0 : container.childNodes[childIndex - 1], state, index, data, GLOBALS_default);
+          tag.enter(tag, container, childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex - 1] : container.childNodes[childIndex - 1], state, index, data, GLOBALS_default);
           return childIndex + container.__i__[index].length;
         }
       }
@@ -1349,16 +1437,16 @@ function U_LOOP(container, tag, state, index, childIndex, __i__) {
       if (!data.length) {
         return childIndex + __i__.exit.size;
       } else {
-        const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.childNodes[childIndex], state, __i__, index, data);
+        const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex], state, __i__, index, data);
         return childIndex + count;
       }
     }
   } else {
     if (!data.length) {
-      const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.childNodes[childIndex], state, __i__, index, data);
+      const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex], state, __i__, index, data);
       return childIndex + count;
     } else {
-      const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.childNodes[childIndex - 1], state, __i__, index, data);
+      const count = Update_Keyed_Loop(tag, container, index === 0 || childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex - 1] : container.childNodes[childIndex - 1], state, __i__, index, data);
       return childIndex + count;
     }
   }
@@ -1368,7 +1456,7 @@ function U_IF_SINGLE(container, tag, state, index, childIndex, __i__) {
     if (!tag.if(state)) {
       return childIndex;
     } else {
-      let element = createElement(tag);
+      let element = createElement(tag, container);
       if (tag.children) {
         Enter_Children(element, tag.children, state);
       } else {
@@ -1387,9 +1475,13 @@ function U_IF_SINGLE(container, tag, state, index, childIndex, __i__) {
       if (tag.enterProps)
         tag.enterProps(element, tag, state, GLOBALS_default);
       if (childIndex === 0) {
-        container.prepend(element);
+        prependElement(container, element);
       } else {
-        container.childNodes[childIndex - 1].after(element);
+        if (container.__rendererName)
+          container._childNodes[childIndex - 1].after(element);
+        else {
+          container.childNodes[childIndex - 1].after(element);
+        }
       }
       container.__i__[index] = { exit: false };
       return childIndex + 1;
@@ -1399,18 +1491,34 @@ function U_IF_SINGLE(container, tag, state, index, childIndex, __i__) {
       if (__i__.exit) {
         clearTimeout(__i__.exit);
         if (tag.enterProps)
-          tag.enterProps(container.childNodes[childIndex], tag, state, GLOBALS_default);
+          tag.enterProps(
+            container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex],
+            tag,
+            state,
+            GLOBALS_default
+          );
         container.__i__[index] = { exit: false };
         return childIndex + 1;
       } else {
-        tag.Update_Tag(container.childNodes[childIndex], tag, state, GLOBALS_default);
+        tag.Update_Tag(
+          container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex],
+          tag,
+          state,
+          GLOBALS_default
+        );
         return childIndex + 1;
       }
     } else {
       if (__i__.exit) {
         return childIndex + 1;
       } else {
-        let isExitNow = Exit_Single(container.childNodes[childIndex], tag, state, container, index);
+        let isExitNow = Exit_Single(
+          container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex],
+          tag,
+          state,
+          container,
+          index
+        );
         if (isExitNow) {
           return childIndex;
         } else {
@@ -1431,7 +1539,7 @@ function U_IF_LOOP(container, tag, state, index, childIndex, __i__) {
           tag.enter(tag, container, void 0, state, index, data, GLOBALS_default);
           return childIndex + container.__i__[index].length;
         } else {
-          tag.enter(tag, container, childIndex === 0 ? void 0 : container.childNodes[childIndex - 1], state, index, data, GLOBALS_default);
+          tag.enter(tag, container, childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex - 1] : container.childNodes[childIndex - 1], state, index, data, GLOBALS_default);
           return childIndex + container.__i__[index].length;
         }
       }
@@ -1441,19 +1549,22 @@ function U_IF_LOOP(container, tag, state, index, childIndex, __i__) {
   } else {
     if (tag.if(state)) {
       let data = tag.loop(state);
-      const count = Update_Keyed_Loop(tag, container, index === 0 && childIndex === 0 ? void 0 : container.childNodes[childIndex], state, __i__, index, data);
+      const count = Update_Keyed_Loop(tag, container, index === 0 && childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex] : container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex], state, __i__, index, data);
       return childIndex + count;
     } else {
       if (__i__.length === 0) {
         return childIndex + __i__.exit.size;
       } else {
-        const count = Update_Keyed_Loop(tag, container, index === 0 && childIndex === 0 ? void 0 : container.childNodes[childIndex], state, __i__, index, []);
+        const count = Update_Keyed_Loop(tag, container, index === 0 && childIndex === 0 ? void 0 : container.__rendererName ? container._childNodes[childIndex] : container.childNodes[childIndex], state, __i__, index, []);
         return childIndex + count;
       }
     }
   }
 }
 function UPDATE_Chidldren(container, component, state) {
+  if (container.isExit) {
+    return;
+  }
   var Finish = void 0;
   container.Done = new Promise((resolve) => Finish = resolve);
   var childIndex = 0;
@@ -1492,7 +1603,7 @@ function UPDATE_Chidldren(container, component, state) {
 
 // src/eue/updateProps.js
 function updateAttribute(tag, element, key, value) {
-  var _a;
+  var _a, _b;
   if (tag.tag === "input" && key === "value") {
     if (element._attrsV[key] !== value) {
       element._attrsV[key] = value;
@@ -1568,6 +1679,7 @@ function updateAttribute(tag, element, key, value) {
         } else {
           if (element._attrsV[key] !== value) {
             element._attrsV[key] = value;
+            ((_b = element._attrs[key]) == null ? void 0 : _b.cancel) && element._attrs[key].cancel();
             element.setAttribute(key, value);
           }
         }
@@ -1619,11 +1731,7 @@ function getFns2() {
     },
     events: function(element, tag, state, GLOBALS2) {
       element.__datum = { ...state };
-      Object.entries(tag.events).forEach(([name, value]) => {
-        element.removeEventListener(name, element._events[name]);
-        element._events[name] = (event) => value(event, element.__datum, element);
-        element.addEventListener(name, element._events[name]);
-      });
+      return;
     }
   };
 }
@@ -1657,9 +1765,9 @@ var chainFunc_default = (...funcs) => {
 
 // src/GLOBALS.js
 var GLOBALS = {
-  createElementHTML,
-  createElementSVG,
   createElement,
+  insertElement,
+  prependElement,
   Enter_Children,
   UPDATE_Chidldren,
   Update_Tag,
@@ -1674,6 +1782,7 @@ var GLOBALS_default = GLOBALS;
 
 // src/eue/enterProps.js
 function enterAttribute(tag, element, key, value) {
+  var _a;
   if (key === "class") {
     var val = value || void 0;
     element._attrsV[key] = val;
@@ -1713,6 +1822,7 @@ function enterAttribute(tag, element, key, value) {
       element._attrsV[key] = value;
       element.innerHTML = value;
     } else {
+      ((_a = element._attrs[key]) == null ? void 0 : _a.cancel) && element._attrs[key].cancel();
       element._attrsV[key] = value;
       element.setAttribute(key, value);
     }
@@ -1722,6 +1832,7 @@ function getFns3() {
   return {
     enterAttrs: function(element, tag, state, GLOBALS2) {
       Object.entries(tag.enterAttrs(state)).forEach(([key, value]) => {
+        var _a;
         if (Array.isArray(value))
           throw "not implemented";
         else {
@@ -1729,6 +1840,7 @@ function getFns3() {
             element._attrsV[key] = value;
             GLOBALS2.animateAttr(element, key, value);
           } else {
+            ((_a = element._attrs[key]) == null ? void 0 : _a.cancel) && element._attrs[key].cancel();
             GLOBALS2.enterAttribute(tag, element, key, value);
           }
         }
@@ -1801,13 +1913,7 @@ function Enter_Keyed_Loop(_tag) {
     var elements = [];
     var prevElement = _prevElement;
     data.forEach((loopState, i) => {
-      if (tag.svg) {
-        var element = document.createElementNS("http://www.w3.org/2000/svg", tag.tag);
-        Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-      } else {
-        var element = document.createElement(tag.tag);
-        Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-      }
+      var element = GLOBALS2.createElement(tag, container);
       element.key = tag.key(loopState, i);
       keys[element.key] = true;
       elements.push(element);
@@ -1834,7 +1940,7 @@ function Enter_Keyed_Loop(_tag) {
         }
       }
       if (i === 0 && !prevElement) {
-        container.prepend(element);
+        GLOBALS2.prependElement(container, element);
       } else {
         prevElement.after(element);
       }
@@ -1849,11 +1955,41 @@ function Enter_Keyed_Loop(_tag) {
     return prevElement;
   };
 }
-function Enter_Light(element, tag, state, GLOBALS2) {
+function Enter_Children_Light(container, component, state, GLOBALS2) {
+  container.__i__ = {};
+  component.forEach((tag, index) => {
+    if (tag.if) {
+      if (!tag.if(state)) {
+        container.__i__[index] = false;
+        return;
+      }
+    }
+    if (tag.loop) {
+      let data = tag.loop(state);
+      if (!data.length) {
+        container.__i__[index] = false;
+        return;
+      } else {
+        throw 123;
+        const childNodes = container.__rendererName ? container._childNodes : container.children;
+        Enter_Light(childNodes[index], tag, state, GLOBALS2, true);
+        return;
+      }
+    } else {
+      const childNodes = container.__rendererName ? container._childNodes : container.children;
+      Enter_Light(childNodes[index], tag, state, GLOBALS2, true);
+      return;
+    }
+  });
+}
+function Enter_Light(element, tag, state, GLOBALS2, isExit) {
   if (tag.enterProps)
     tag.enterProps(element, tag, state, GLOBALS2);
   if (tag.children) {
-    Enter_Children(element, tag.children, state);
+    if (!isExit)
+      Enter_Children(element, tag.children, state);
+    else
+      Enter_Children_Light(element, tag.children, state, GLOBALS2);
   } else {
     if (tag.text) {
       if (typeof tag.text === "function") {
@@ -1870,6 +2006,7 @@ function Enter_Light(element, tag, state, GLOBALS2) {
       }
     }
   }
+  return element;
 }
 function Enter_Text(tag, container, prevElement, state, index) {
   tag.element = document.createTextNode(tag.content);
@@ -1883,13 +2020,7 @@ function Enter_Text(tag, container, prevElement, state, index) {
 }
 function Enter_Single(_tag) {
   return (tag, container, prevElement, state, index, ____, GLOBALS2) => {
-    if (tag.svg) {
-      var element = document.createElementNS("http://www.w3.org/2000/svg", tag.tag);
-      Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-    } else {
-      var element = document.createElement(tag.tag);
-      Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-    }
+    var element = GLOBALS2.createElement(tag, container);
     tag.enterProps && tag.enterProps(element, tag, state, GLOBALS2);
     if (tag.text) {
       if (typeof tag.text === "function") {
@@ -1905,32 +2036,16 @@ function Enter_Single(_tag) {
         element.innerHTML = element.__lastHTML = tag.html;
       }
     }
-    if (prevElement) {
-      prevElement.after(element);
-    } else {
-      container.prepend(element);
-    }
-    ;
+    GLOBALS2.insertElement(container, element, prevElement);
     container.__i__[index] = { exit: false };
     return element;
   };
 }
 function Enter_Single_with_Children(_tag) {
   return (tag, container, prevElement, state, index, ____, GLOBALS2) => {
-    if (tag.svg) {
-      var element = document.createElementNS("http://www.w3.org/2000/svg", tag.tag);
-      Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-    } else {
-      var element = document.createElement(tag.tag);
-      Object.assign(element, { _attrs: {}, _styles: {}, _attrsV: {}, _styleV: {}, _colors: {}, _events: {} });
-    }
+    var element = GLOBALS2.createElement(tag, container);
     tag.enterProps && tag.enterProps(element, tag, state, GLOBALS2);
-    if (prevElement) {
-      prevElement.after(element);
-    } else {
-      container.prepend(element);
-    }
-    ;
+    GLOBALS2.insertElement(container, element, prevElement);
     GLOBALS2.Enter_Children(element, tag.children, state);
     container.__i__[index] = { exit: false };
     return element;
@@ -2141,7 +2256,7 @@ async function parseBlocks(source) {
       continue;
     const test = testUniqueBlock(line, uniqueBlocks);
     if (!test) {
-      if (["css", "import", "tag"].some((_block) => {
+      if (["css", "import", "tag", "renderer"].some((_block) => {
         const testUB = testBlock(line, _block);
         if (testUB) {
           block = _block;
@@ -2161,7 +2276,7 @@ async function parseBlocks(source) {
       continue;
     }
     if (!test) {
-      if (["css", "import", "tag"].includes(block)) {
+      if (["css", "import", "tag", "renderer"].includes(block)) {
         if (!blocks.template) {
           block = "template";
           templateLine = i;
@@ -2214,6 +2329,14 @@ function parseCSSDirective(tag) {
   const splitted = splitByChar(tag, " ", true);
   if (splitted.length > 1)
     throw `excess parameters <!import ${tag}>`;
+  return stripQuotes(tag);
+}
+function parseRendererDirective(tag) {
+  const splitted = splitByChar(tag, " ", true);
+  if (splitted.length > 2)
+    throw `excess parameters <!renderer ${tag}>`;
+  if (splitted.length == 2 && splitted[1] !== "html")
+    throw `unknown second parameter <!renderer ${tag}>`;
   return stripQuotes(tag);
 }
 function validateName(name) {
@@ -2298,6 +2421,8 @@ async function parseComponent(source) {
     blocks.css = blocks.css.map(parseCSSDirective);
   if (blocks.import)
     blocks.import = blocks.import.map(parseImportDirective);
+  if (blocks.renderer)
+    blocks.renderer = blocks.renderer.map(parseRendererDirective);
   return blocks;
 }
 
@@ -2390,118 +2515,6 @@ var Spring = class {
   }
   isAtTarget() {
     return Math.abs(this.target - this.current) < this.delta && Math.abs(this.velocity) <= this.delta;
-  }
-};
-
-// src/runtime/baseClass.js
-var baseClassMixin = (superclass) => class baseClass extends superclass {
-  connectedCallback() {
-    Enter_Children(this.document, this.component, { state: this.state });
-    delete this.__proto__.initialize;
-    this.is_connected = true;
-    if (this.slotChange) {
-      this._slot_observer = new MutationObserver((mut) => this.slotChange(mut));
-      this._slot_observer.observe(this, this.MutationObserverOptions);
-    }
-    if (this.connected) {
-      this.connected();
-    }
-  }
-  disconnectedCallback() {
-    this.disconnected && this.disconnected();
-    Object.keys(this.window_events).forEach(
-      (event) => this.window_events[event].forEach(
-        (callback) => window.removeEventListener(event, callback.cb)
-      )
-    );
-  }
-  render() {
-    if (this.is_connected)
-      UPDATE_Chidldren(this.document, this.component, { state: this.state });
-  }
-  setAttribute(key, value) {
-    this.attributeChangedCallback(key, void 0, value);
-    if (this.AddAttributes && typeof value !== "object")
-      super.setAttribute(key, value);
-  }
-  initialize() {
-    this.component = this.initial_component;
-    this.animate = TinyAnimate_default.animate;
-    this.animateCSS = (property, { element, unit, from, to, duration, easing, done }) => {
-      element._styles[property] = TinyAnimate_default.animateCSS(element || this, property, unit === void 0 ? "" : unit, from || 0, to, duration || 1e3, easing, () => {
-        element._styleV[property] = to + unit;
-        if (done)
-          done();
-      });
-    };
-    this.Spring = Spring;
-    toProto(this.component);
-    this.window_events = {};
-    if (this.css.length) {
-      const style = document.createElement("style");
-      style.textContent = this.css;
-      if (!this.ShadowDOM)
-        setTimeout(() => {
-          this.document.append(style);
-        }, 0);
-      else
-        this.document.append(style);
-    }
-  }
-  //--------------------------------
-  //  SUGAR :)
-  get cookies() {
-    return typeof document !== "undefined" ? Object.assign(
-      {},
-      ...document.cookie.split(";").filter((s) => s).map((cookie) => cookie.split("=")).map(([key, value]) => ({ [key.trim()]: (value + "").trim() }))
-    ) : {};
-  }
-  get hash() {
-    return typeof window !== "undefined" ? window.location.hash.substr(1).split("/") : [];
-  }
-  get slotted() {
-    const slot = this.document.querySelector("slot");
-    return slot ? slot.assignedElements() : [];
-  }
-  get element() {
-    return this.ShadowDOM ? this.document.host : this.document;
-  }
-  $(selector) {
-    return this.document.querySelector(selector);
-  }
-  $$(selector) {
-    return this.document.querySelectorAll(selector);
-  }
-  //--------------------------------
-  emitNative(event, payload) {
-    console.warn(`this.emitNative() is deprecated. Use this.emit(). "${this.__src}"`);
-    this.emit(event, payload);
-  }
-  emit(event, payload) {
-    this.dispatchEvent(new CustomEvent(event, {
-      cancelable: false,
-      bubbles: false,
-      detail: payload
-    }));
-  }
-  on(event, callback, options) {
-    if (!this.window_events[event])
-      this.window_events[event] = [];
-    const found = this.window_events[event].find((x) => x.callback === callback);
-    const cb = (...args) => callback.call(this, ...args);
-    if (!found) {
-      this.window_events[event].push({ callback, cb });
-      window.addEventListener(event, cb, options);
-    }
-  }
-  off(event, callback) {
-    if (!this.window_events[event])
-      return;
-    const index = this.window_events[event].findIndex((x) => x.callback === callback);
-    if (index !== -1) {
-      window.removeEventListener(event, this.window_events[event][index].cb);
-      this.window_events[event].splice(index, 1);
-    }
   }
 };
 
@@ -7536,6 +7549,142 @@ var plugins = {
 };
 var plugins_default = plugins;
 
+// src/runtime/baseClass.js
+var baseClassMixin = (superclass) => class baseClass extends superclass {
+  baseInit() {
+    this.component = this.initial_component;
+    toProto(this.component);
+    this.animate = TinyAnimate_default.animate;
+    this.Spring = Spring;
+    this.window_events = {};
+    this.checkStateObjectChanges = {};
+    this.state = this.initial_state;
+    if (this.__walt) {
+      this.walt = plugins_default.walt.initWalt(this.__walt, this, this.state);
+    }
+    delete this.__proto__.baseInit;
+  }
+  async connectedCallback() {
+    if (this.renderer && !this.__rendererHTML && this.__rendererName !== this.parent.__rendererName) {
+      throw `ui.js diffferent renderers ${this.__rendererName} and ${this.parent.__rendererName}`;
+    }
+    Enter_Children(this.document, this.component, { state: this.state });
+    this.is_connected = true;
+    if (this.connected)
+      this.connected();
+  }
+  async disconnectedCallback() {
+    this.disconnected && await this.disconnected();
+    Object.keys(this.window_events).forEach(
+      (event) => this.window_events[event].forEach(
+        (callback) => window.removeEventListener(event, callback.cb)
+      )
+    );
+  }
+  render() {
+    if (this.is_connected)
+      UPDATE_Chidldren(this.document, this.component, { state: this.state });
+  }
+  attributeChangedCallback(key, old, value) {
+    if (typeof value === "object") {
+      if (Array.isArray(this.state[key]) && Array.isArray(value) && this.state[key].length == 0 && value.length == 0)
+        return;
+      if (this.checkStateObjectChanges[key] && JSON.stringify(this.state[key]) === JSON.stringify(value)) {
+        return;
+      }
+    } else if (this.state[key] === value)
+      return;
+    this.state[key] = value;
+    this.changed && this.changed({ [key]: value });
+    this.render();
+  }
+  //--------------------------------
+  //  SUGAR :)
+  hasEventHandler(event) {
+    if (!this._events)
+      return !!this.getAttribute("on" + event);
+    return !!this._events[event];
+  }
+  get cookies() {
+    return typeof document !== "undefined" ? Object.assign(
+      {},
+      ...document.cookie.split(";").filter((s) => s).map((cookie) => cookie.split("=")).map(([key, value]) => ({ [key.trim()]: (value + "").trim() }))
+    ) : {};
+  }
+  get hash() {
+    return typeof window !== "undefined" ? window.location.hash.substr(1).split("/") : [];
+  }
+  //--------------------------------
+  on(event, callback, options) {
+    if (!this.window_events[event])
+      this.window_events[event] = [];
+    const found = this.window_events[event].find((x) => x.callback === callback);
+    const cb = (...args) => callback.call(this, ...args);
+    if (!found) {
+      this.window_events[event].push({ callback, cb });
+      window.addEventListener(event, cb, options);
+    }
+  }
+  off(event, callback) {
+    if (!this.window_events[event])
+      return;
+    const index = this.window_events[event].findIndex((x) => x.callback === callback);
+    if (index !== -1) {
+      window.removeEventListener(event, this.window_events[event][index].cb);
+      this.window_events[event].splice(index, 1);
+    }
+  }
+};
+
+// src/runtime/htmlClass.js
+var htmlClassMixin = (superclass) => class baseClass extends superclass {
+  htmlInit() {
+    this.animateCSS = (property, { element, unit, from, to, duration, easing, done }) => {
+      element._styles[property] = TinyAnimate_default.animateCSS(element || this, property, unit === void 0 ? "" : unit, from || 0, to, duration || 1e3, easing, () => {
+        element._styleV[property] = to + unit;
+        if (done)
+          done();
+      });
+    };
+    if (this.css.length) {
+      const style = document.createElement("style");
+      style.textContent = this.css;
+      if (!this.ShadowDOM)
+        setTimeout(() => {
+          this.document.append(style);
+        }, 0);
+      else
+        this.document.append(style);
+    }
+    delete this.__proto__.htmlInit;
+  }
+  setAttribute(key, value) {
+    this.attributeChangedCallback(key, void 0, value);
+    if (this.AddAttributes && typeof value !== "object")
+      super.setAttribute(key, value);
+  }
+  //------------------------------------------------------------------------------
+  //  SUGAR :)
+  $(selector) {
+    return this.document.querySelector(selector);
+  }
+  $$(selector) {
+    return this.document.querySelectorAll(selector);
+  }
+  // -----------------------------------------------------------------------------
+  emitNative(event, payload) {
+    console.warn(`this.emitNative() is deprecated. Use this.emit(). "${this.__src}"`);
+    this.emit(event, payload);
+  }
+  emit(event, payload) {
+    this.dispatchEvent(new CustomEvent(event, {
+      cancelable: false,
+      bubbles: false,
+      detail: payload
+    }));
+  }
+};
+
 // src/runtime/customElement.js
 var customElement;
 if (typeof window !== "undefined") {
@@ -7545,50 +7694,133 @@ if (typeof window !== "undefined") {
       this.AddAttributes = false;
       this.ShadowDOM = "open";
       this.MutationObserverOptions = { childList: true };
-      this.state = this.initial_state;
-      if (this.__walt) {
-        this.walt = plugins_default.walt.initWalt(this.__walt, this, this.state);
-      }
-      this.checkStateObjectChanges = {};
+      this.baseInit();
       this.init && this.init();
       this.document = ["open", "closed"].includes(this.ShadowDOM) ? this.attachShadow({ mode: this.ShadowDOM }) : this;
-      this.initialize();
+      this.htmlInit();
+      if (this.slotChange) {
+        this._slot_observer = new MutationObserver((mut) => this.slotChange(mut));
+        this._slot_observer.observe(this, this.MutationObserverOptions);
+      }
     }
-    attributeChangedCallback(key, old, value) {
-      if (typeof value === "object") {
-        if (Array.isArray(this.state[key]) && Array.isArray(value) && this.state[key].length == 0 && value.length == 0)
-          return;
-        if (this.checkStateObjectChanges[key] && JSON.stringify(this.state[key]) === JSON.stringify(value)) {
-          return;
-        }
-      } else if (this.state[key] === value)
-        return;
-      this.state[key] = value;
-      this.changed && this.changed({ [key]: value });
-      if (this.is_connected)
-        UPDATE_Chidldren(this.document, this.component, { state: this.state });
+    //------------------------------------------------------------------------------
+    //  SUGAR :)
+    get slotted() {
+      const slot = this.document.querySelector("slot");
+      return slot ? slot.assignedElements() : [];
+    }
+    get element() {
+      return this.ShadowDOM ? this.document.host : this.document;
     }
   }
-  customElement = class extends baseClassMixin(_customElement) {
+  customElement = class extends htmlClassMixin(baseClassMixin(_customElement)) {
   };
 }
 
-// src/runtime/iElement.js
-var _iElement = class {
+// src/runtime/uiElement.js
+var _uiElement = class {
   constructor() {
-    this.state = this.initial_state;
-    this.init && this.init();
     this.document = document.querySelector(this.container);
     if (!this.document)
       throw `i.js: target container "${this.container}" not found`;
-    this.initialize();
+    this.baseInit();
+    this.htmlInit();
+    this.init && this.init();
     this.connectedCallback();
   }
-  destroy() {
-    this.disconnectedCallback();
+  //------------------------------------------------------------------------------
+  //  SUGAR :)
+  get element() {
+    return this.document;
   }
 };
-var iElement = class extends baseClassMixin(_iElement) {
+var uiElement = class extends htmlClassMixin(baseClassMixin(_uiElement)) {
+};
+
+// src/runtime/baseElement.js
+var _baseElement = class {
+  constructor(parent, tag) {
+    this._BASE_ELEMENT = true;
+    this.document = {
+      _childNodes: [],
+      __rendererName: this.__rendererName
+    };
+    this._childNodes = [];
+    this._eventListeners = {};
+    this.parent = parent;
+    this.baseInit();
+    if (this.renderer && !this.__rendererHTML && this.__rendererName !== this.parent.__rendererName) {
+      throw `ui.js diffferent renderers ${this.__rendererName} and ${this.parent.__rendererName}`;
+    }
+    this.onReady = new Promise(async (Ready) => {
+      var _a, _b, _c;
+      if ((_a = this.renderer) == null ? void 0 : _a.onReady)
+        await this.renderer.onReady;
+      if ((_b = this.parent) == null ? void 0 : _b.onReady)
+        await this.parent.onReady;
+      if ((_c = this.renderer) == null ? void 0 : _c.onConnect)
+        await this.renderer.onConnect(this);
+      this.document.renderer = this.renderer;
+      this.document.parent = this.document;
+      this.init && await this.init();
+      Enter_Children(this.document, this.component, { state: this.state });
+      Ready();
+      this.is_connected = true;
+      if (this.connected)
+        await this.connected();
+    });
+  }
+  setAttribute(key, value) {
+    this.attributeChangedCallback(key, void 0, value);
+  }
+  //------------------------------------------------------------------------------
+  emit(event, payload) {
+    if (this._eventListeners[event])
+      this._eventListeners[event].forEach((ev) => ev.cb(new CustomEvent(event, {
+        cancelable: false,
+        bubbles: false,
+        detail: payload
+      })));
+  }
+  addEventListener(event, callback, options) {
+    if (!this._eventListeners[event])
+      this._eventListeners[event] = [];
+    const found = this._eventListeners[event].find((x) => x.callback === callback);
+    const cb = (...args) => callback.call(this, ...args);
+    if (!found) {
+      this._eventListeners[event].push({ callback, cb });
+    }
+  }
+  removeEventListener(event, callback) {
+    if (!this._eventListeners[event])
+      return;
+    const index = this._eventListeners[event].findIndex((x) => x.callback === callback);
+    if (index !== -1) {
+      this._eventListeners[event].splice(index, 1);
+    }
+  }
+  //------------------------------------------------------------------------------
+  async remove() {
+    await this.disconnectedCallback();
+    while (this.document._childNodes.length) {
+      await this.document._childNodes[this.document._childNodes.length - 1].remove();
+    }
+    if (this.renderer.onDisconnect)
+      await this.renderer.onDisconnect(this);
+    const index = this.parent._childNodes.findIndex((x) => x == this);
+    if (index !== -1)
+      this.parent._childNodes.splice(index, 1);
+    else
+      throw "Element not found";
+  }
+  after(element) {
+    this.renderer.insertAfter(this, element);
+  }
+  before(element) {
+    this.renderer.insertBefore(this, element);
+  }
+};
+var baseElement = class extends baseClassMixin(_baseElement) {
 };
 
 // src/compiler/hashName.js
@@ -7606,10 +7838,6 @@ var cyrb53 = (str, seed = 0) => {
 function hashName(source, url) {
   return "ui-" + String(url ? cyrb53(url) : cyrb53(source.trim())).replaceAll("-", "i");
 }
-
-// src/tags.js
-var tags = {};
-var tags_default = tags;
 
 // src/compiler/createTag.js
 var importsCache = {};
@@ -7636,7 +7864,7 @@ var includeImports = (imports, nodePath, BASE_URL, _path) => imports.reduce((pre
   }
   return prev;
 }, "");
-function generateJS(component, baseClass, { inFunc = false }) {
+function generateJS(component, baseClass, { inFunc = false, parent }) {
   const style = Object.values(plugins_default).filter((p) => p.processStyle).reduce((style2, plugin) => plugin.processStyle(style2), component.style || "");
   const walt = component.walt ? plugins_default.walt.compileWalt(component.walt) : "undefined";
   const state = `{${(component.state || "").trim()}}`;
@@ -7644,6 +7872,18 @@ function generateJS(component, baseClass, { inFunc = false }) {
   const class_name = className(component.name);
   const i_component = Stringify(parseTemplate(component.template, component.tag || []));
   const container = component.container ? `get container()         { return "${component.container}" }` : "";
+  var renderer = "";
+  if (component.renderer) {
+    const split = component.renderer[0].split(" ");
+    renderer = 'get __rendererName(){ return "' + split[0] + '" }';
+    if (split.length == 2) {
+      var rendererHTML = true;
+      renderer += "\nget __rendererHTML(){ return true }";
+    } else {
+      renderer += "\nget renderer(){ return this.parent?.renderer }";
+    }
+  }
+  ;
   const code1 = `
 
         ${component.static || ""};
@@ -7655,21 +7895,32 @@ function generateJS(component, baseClass, { inFunc = false }) {
             get css()               { return \`${style}\`; }
             get __walt()            { return ${walt} }
             get __src()             { return "${component.src}" }
+            ${renderer}
             ${container}
             ${component.class || ""}
         };
     `;
-  const code2 = baseClass === "customElement" ? `
-        ${component.import ? includeImports(component.import, component.nodePath, component.BASE_URL, component.path) : ""}
-        if(!customElements.get('${component.name}')) {
-            ${code1}
-            customElements.define('${component.name}', ${class_name});
-            window['iJS'].tags['${component.name}'] = true;
-        }
-    ` : `
-        ${component.import ? includeImports(component.import, component.nodePath, component.BASE_URL, component.path) : ""}
-        ${code1} return new ${class_name}()`;
-  return inFunc ? `;(async () => {${code2}})();` : code2;
+  switch (baseClass) {
+    case "customElement":
+      const _customElement = `
+                ${component.import ? includeImports(component.import, component.nodePath, component.BASE_URL, component.path) : ""}
+                if(!customElements.get('${component.name}')) {
+                    ${code1}
+                    customElements.define('${component.name}', ${class_name});
+                    window['UIjs'].tags['${component.name}'] = true;
+                };`;
+      return inFunc ? `;(async () => {${_customElement}})();` : _customElement;
+    case "uiElement":
+      const _uiElement2 = `
+                ${component.import ? includeImports(component.import, component.nodePath, component.BASE_URL, component.path) : ""}
+                ${code1} return new ${class_name}("${"parentparentparent:" + parent}");`;
+      return inFunc ? `;(async () => {${_uiElement2}})();` : _uiElement2;
+    case "baseElement":
+      const _baseElement2 = `
+                ${component.import ? includeImports(component.import, component.nodePath, component.BASE_URL, component.path) : ""}
+                ${code1} ;window['UIjs'].tags['${component.name}'] = ${class_name};`;
+      return inFunc ? `;(async () => {${_baseElement2}})();` : _baseElement2;
+  }
 }
 async function createAndReplaceSelf(script, path, nanoapp) {
   const name = hashName(script.innerText);
@@ -7751,8 +8002,8 @@ async function createTag(source, opts = {}) {
   component.container = opts.container || "";
   component.nodePath = opts.nodePath ? opts.nodePath : void 0;
   component.BASE_URL = opts.BASE_URL;
-  const nodeFetch = opts.nodeFetch || void 0;
   component.nanoapp = opts.nanoapp || [];
+  const nodeFetch = opts.nodeFetch || void 0;
   var style = "";
   if (component.style) {
     component.style = component.style.trim();
@@ -7802,9 +8053,13 @@ async function createTag(source, opts = {}) {
     }
   }
   tags_default[component.name] = true;
-  if (component.container) {
-    const content = generateJS(component, "iElement", { inFunc: false });
-    const result = await new AsyncFunction_default("iElement", content)(iElement);
+  if (component.renderer && component.renderer[0].split(" ").length == 1) {
+    const content = generateJS(component, "baseElement", { inFunc: false });
+    const result = await new AsyncFunction_default("baseElement", content)(baseElement);
+    return result;
+  } else if (component.container) {
+    const content = generateJS(component, "uiElement", { inFunc: false });
+    const result = await new AsyncFunction_default("uiElement", content)(uiElement);
     return result;
   } else {
     const content = generateJS(component, "customElement", { inFunc: true });
@@ -7860,7 +8115,7 @@ async function processScripts() {
       const target = attrs.find((a) => a.name === "target" && a.value.length);
       if (target) {
         if (attrs.length > 2)
-          console.warn(`ui.js warning: all other attributes for "<script type=i target="${target.value}"> will be ignored"`);
+          console.warn(`ui.js warning: all other attributes for "<script type=ui target="${target.value}"> will be ignored"`);
         await mountToTarget(script, target.value, path);
         script.remove();
         continue;
@@ -7890,9 +8145,9 @@ async function processScripts() {
 }
 
 // src/index.js
-var VERSION = "0.6.50-dev";
-!VERSION.endsWith("-dev") && console.log(`ui.js \u2764\uFE0F  ${VERSION} alpha experiment. Make DOM great again!`);
-var iJS = {
+var VERSION = "0.7.2-dev";
+!VERSION.endsWith("-dev") && console.log(`ui.js \u2764\uFE0F ${VERSION} alpha experiment. Make user interfaces great again!`);
+var UIjs = {
   VERSION,
   tags: tags_default,
   customElement,
@@ -7900,9 +8155,9 @@ var iJS = {
   compile: compile2,
   plugins: plugins_default
 };
-var src_default = iJS;
+var src_default = UIjs;
 if (typeof window !== "undefined") {
-  window["iJS"] = iJS;
+  window["UIjs"] = UIjs;
   document.addEventListener("DOMContentLoaded", processScripts);
 }
 export {

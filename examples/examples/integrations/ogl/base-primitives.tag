@@ -1,4 +1,4 @@
-<!import * as ogl from 'ogl.esm.js'>
+<!import * as ogl from ogl.esm.js>
 
 <!class>
     connected() {

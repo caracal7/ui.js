@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Letters</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="../../src/index.js"></script>
+    <style> html, body { padding: 0; margin: 0; height: 100%; background: black } </style>
+</head>
+<body>
+    <script type=ui>
+
+        <div
+            if(state.visible)
+            text('HTML')
+            style{ 'font-size': '48px' }
+            enter{
+                color:   {                        to: '#FF0000',                            duration: 1500 },
+                opacity: { default: 0,            to: 1,                                    duration: 1000 },
+                left:    { default: state.x+'px', to: state.x+'px', ease: 'easeInOutQuint', duration: 2000 },
+                top:     { default: '0px',        to: '300px',      ease: 'easeOutQuint',   duration: 2000 },
+            }
+            update{
+                color:   { to: '#0088FF' },
+                left:    { to: state.x+'px',                        ease: 'easeOutBounce' },
+            }
+            exit{
+                color:   { to: '#CCCCCC',                                                   duration: 1000 },
+                top:     { to: '520px',                             ease: 'easeOutBounce',  duration: 3000 }
+            }/>
+
+        <svg attrs{width: 400, height: 600} style{ position: 'absolute' }>
+            <text
+                if(state.visible)
+                text('SVG')
+                enter    { fill: { to: '#FF0000', duration: 1500 }, font: 'bold 48px monospace' }
+                update   { fill: { to: '#0088FF'} }
+                exit     { fill: { to: '#CCCCCC', duration: 1000 } }
+
+                #enter{
+                    x:   { default: state.x, to: state.x,  ease: 'easeInOutQuint', duration: 2000 },
+                    y:   { default: 0,       to: 300,      ease: 'easeOutQuint',   duration: 2000 }
+                }
+                #update{
+                    x:   {                   to: state.x,  ease: 'easeOutBounce'}
+                }
+                #exit{
+                    y:   {                   to: 520,      ease: 'easeOutBounce', duration: 3000 }
+                }/>
+
+        </svg>
+
+
+        <footer>
+            <button text('ENTER / RESTORE')  @click{ state.visible = true }                 disabled= state.visible/>
+            <button text('EXIT')   @click{ state.visible = false }                disabled=!state.visible/>
+            <button text('UPDATE') @click{ state.x = state.x == 100 ? 10 : 100 }  disabled=!state.visible/>
+        </footer>
+
+        <!state>
+            visible: true,
+            x: 100
+
+        <!style>
+            :host {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                font-family: Verdana;
+            }
+
+            div {
+                position: absolute;
+                white-space: nowrap;
+                width: 450px;
+                text-align: center;
+            }
+
+            footer {
+                position: absolute;
+                bottom: 50px;
+                width: 100%;
+            }
+
+            button {
+                width: 33%;
+                height: 50px;
+                background: #015E5B;
+                color: white;
+                box-shadow:inset 0 -0.6em 1em -0.35em rgba(0,0,0,0.17),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+                border: 0;
+                font-size: 15px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background: #009a95;
+            }
+
+            button:disabled {
+                background: gray;
+                color: #555555;
+            }
+
+    </script>
+</body>
+</html>
