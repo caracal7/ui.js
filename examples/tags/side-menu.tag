@@ -71,7 +71,6 @@
 
 <!class>
     connected() {
-        console.log('connected')
         const resize = () => {
             const mq = window.matchMedia( "(min-width: 600px)" );
             this.state.big = mq.matches;
