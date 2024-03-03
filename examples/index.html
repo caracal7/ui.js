@@ -51,16 +51,8 @@
                             filename=file/>
                     </article>
                     <article if(isExternals(state.selected_example)) caption='Externals' caption-css="font-weight:bold">
-                        <ul if(Array.isArray(state.selected_example.externals))>
-                            <li loop(state.selected_example.externals as file, ind|d => d)>
-                                <@download-link
-                                    href=(state.selected_example.base + '/' + file)
-                                    filename=(file.split("/").pop())
-                                    text(file.split("/").pop())/>
-                            </li>
-                        </ul>
                         <div style='padding:10px'
-                            if(!Array.isArray(state.selected_example.externals))
+                            if(!Array.isArray(state.selected_example.externals) && Object.keys(state.selected_example.externals).length)
                             loop(Object.keys(state.selected_example.externals) as folder|d => d)>
                             <h2 text(folder)/>
                             <ul>
@@ -80,9 +72,9 @@
 
         <!static>
             function isExternals(selected_example) {
-                if(!selected_example || !selected_example.externals) return;
-                if(Array.isArray(selected_example.externals) && selected_example.externals.length) return true;
+                if(!selected_example || !selected_example.externals) return false;
                 if(Object.keys(selected_example.externals).length) return true;
+                return false;
             }
 
             function splitLast(str, substring) {

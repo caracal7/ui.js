@@ -53,20 +53,22 @@ export default [
         { caption: 'Vanilla 2D WebGL',      base: 'demo', urls: ['Vanilla2DWebGL.tag'] },
         { caption: 'Shadertoy',   submenu: [
             { caption: 'Simple',          base: 'demo/shadertoy', urls: ['simple.tag', 'shadertoy.tag'] },
-            { caption: 'Examples',        base: 'demo/shadertoy', urls: ['examples.tag', 'shadertoy.tag', 'shaders.examples.js'], externals: ['../../ui/window.tag', '../../ui/splitter.tag'] },
+            { caption: 'Examples',        base: 'demo/shadertoy', urls: ['examples.tag', 'shadertoy.tag', 'shaders.examples.js'], externals: {tags:['../../ui/window.tag', '../../ui/splitter.tag'] }},
         ]},
         { caption: 'Logo maker',          base: 'demo', urls: ['logo-maker.tag', 'logo-maker.css'] },
     ]},
     { caption: 'Integrations', submenu: [
-        { caption: 'axon.js',                   base: 'integrations/axon.js', urls: ['axon.tag', 'axon-debug.tag'], externals: ['axon.esm.js', '../../../assets/button.css','../../ui/window.tag', '../../ui/table/table.tag', '../../ui/table/currency.tag', '../../ui/table/knum.tag'] },
+        { caption: 'axon.js',                   base: 'integrations/axon.js', urls: ['axon.tag', 'axon-debug.tag'], externals: {lib:['axon.esm.js', '../../../assets/button.css','../../ui/window.tag', '../../ui/table/table.tag', '../../ui/table/currency.tag', '../../ui/table/knum.tag'] }},
         { caption: 'GPU.js',   submenu: [
-            { caption: 'Fade',                  base: 'integrations/GPU.js', urls: ['fade.tag'], externals: ['gpu-browser.esm.js'] },
-            { caption: 'Julia fractal',         base: 'integrations/GPU.js', urls: ['julia.tag'], externals: ['gpu-browser.esm.js'] },
-            { caption: 'Parametric animation',  base: 'integrations/GPU.js', urls: ['paraplot.tag'], externals: ['gpu-browser.esm.js'] },
-            { caption: 'Game Of Life',          base: 'integrations/GPU.js', urls: ['conway.tag'], externals: ['gpu-browser.esm.js'] },
+            { caption: 'Fade',                  base: 'integrations/GPU.js', urls: ['fade.tag'], externals: { gpu: ['gpu-browser.esm.js']}},
+            { caption: 'Julia fractal',         base: 'integrations/GPU.js', urls: ['julia.tag'], externals: { gpu: ['gpu-browser.esm.js']}},
+            { caption: 'Parametric animation',  base: 'integrations/GPU.js', urls: ['paraplot.tag'], externals: { gpu: ['gpu-browser.esm.js']}},
+            { caption: 'Game Of Life',          base: 'integrations/GPU.js', urls: ['conway.tag'], externals: { gpu: ['gpu-browser.esm.js']}},
         ]},
         { caption: 'JSCAD',   submenu: [
-            { caption: 'Simple',   base: 'integrations/jscad', urls: ['jscad-simple.tag'], externals: { 'tags/jscad': ['jscad.tag', 'jscad-modeling.esm.min.js', 'jscad-regl-renderer.esm.min.js', 'jscad-example.js'] } },
+            { caption: 'Simple',   base: 'integrations/jscad', urls: ['jscad-simple.tag'], externals: {
+                'tags/jscad': ['jscad.tag', 'jscad-modeling.esm.min.js', 'jscad-regl-renderer.esm.min.js', 'jscad-example.js']
+            }},
             { caption: 'Editor',   base: 'integrations/jscad', urls: ['jscad-editor.tag'], externals: {
                 'tags/jscad': [
                     'jscad.tag',
@@ -93,9 +95,9 @@ export default [
             }},
         ]},
         { caption: 'OGL',   submenu: [
-            { caption: 'Simple',            base: 'integrations/ogl', urls: ['ogl_simple.tag'], externals: ['ogl.esm.js'] },
-            { caption: 'Base primitives',   base: 'integrations/ogl', urls: ['base-primitives.tag'], externals: ['ogl.esm.js'] },
-            { caption: 'Scene graph',       base: 'integrations/ogl', urls: ['scene-graph.tag'], externals: ['ogl.esm.js'] },
+            { caption: 'Simple',            base: 'integrations/ogl', urls: ['ogl_simple.tag'], externals: { ogl: ['ogl.esm.js'] } },
+            { caption: 'Base primitives',   base: 'integrations/ogl', urls: ['base-primitives.tag'], externals: { ogl: ['ogl.esm.js'] } },
+            { caption: 'Scene graph',       base: 'integrations/ogl', urls: ['scene-graph.tag'], externals:{ ogl: ['ogl.esm.js'] } },
             { caption: 'MSDF text',         base: 'integrations/ogl', urls: ['ogl_text.tag'], externals: {
                 ogl: [
                     'ogl.esm.js',
@@ -107,9 +109,11 @@ export default [
             }},
         ]},
         { caption: 'Three.js',   submenu: [
-            { caption: 'Simple',   base: 'integrations/three.js', urls: ['simple.tag' , 'three.helper.js'], externals: ['three.module.min.js'] },
+            { caption: 'Simple',   base: 'integrations/three.js', urls: ['simple.tag' , 'three.helper.js'], externals: {three:['three.module.min.js']} },
         ]},
-        { caption: 'Markdown-it / Highlight.js',    base: 'integrations/markdown-it', urls: ['markdown.html', 'markdown.tag', 'test.md'], externals: ['markdown-it.min.js', 'highlight.min.js', 'default.min.css'] },
+        { caption: 'Markdown-it / Highlight.js',    base: 'integrations/markdown-it', urls: ['markdown.html', 'markdown.tag', 'test.md'], externals: {
+            lib: ['markdown-it.min.js', 'highlight.min.js', 'default.min.css']
+        }},
         { caption: 'Monaco editor',                 base: 'integrations/monaco-editor', urls: ['monaco-example.tag'], externals: {
                 'tags': [
                     '../../ui/window.tag'
