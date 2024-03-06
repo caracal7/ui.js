@@ -3,7 +3,7 @@
 <h3>(console output)</h3>
 
 <button @click=callWalt>
-    Call WALT function from i.js class
+    Call WALT function from ui.js class
 </button>
 <br>
 

@@ -9,7 +9,7 @@
 
 <!static>
     Archive.init({
-        workerUrl: 'dist/worker-bundle.js'
+        workerUrl: '/examples/dist/worker-bundle.js'
     });
 
     function download(file, name) {
@@ -119,6 +119,7 @@ Have a nice coding :)
 
 
     async click() {
+
         const ui = await (await fetch('../dist/ui.js')).text();
 
         const caption = this.state.example.caption;

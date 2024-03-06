@@ -4,6 +4,7 @@
     }>
     ui.js
 </b>
+<small>experiment</small>
 
 <!style>
     :host {
@@ -11,4 +12,8 @@
         position: absolute;
         top: 50%;
         margin:auto 50%;
+    }
+
+    small {
+        padding-left: 10px;
     }

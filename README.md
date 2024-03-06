@@ -3,21 +3,19 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 
 # Why?
 
-Time is money. <a href="https://en.wikipedia.org/wiki/Time_to_market">Time to market</a> is the way to money. We don’t have the money to lose our time with slow dev tools.☝️ 🙂
-
 HTML, CSS and JavaScript are great technologies, but they are too different and general-purpose. And since you need all of these technologies to develop user interfaces, you need an intermediate layer to link them together.
 
-There are many solutions for this task, such as React, Vue, Angular, Svelte, etc. But most of them are either constrained by trying to extend HTML syntax and inherit its limitations, or offer a complex build process not possible on the fly, or offer a syntax too far from the underlying technologies.
+There are many solutions for this task, such as React, Vue, Angular, Svelte, etc. But most of them are DOM-focused and either constrained by trying to extend HTML syntax and inherit its limitations, or offer a complex build process not possible on the fly, or offer a syntax too far from the underlying technologies.
 
-ui.js offers a slightly different way of looking at interface development, allowing for much simpler and faster interface development.
+The main goal of **ui.js** is to offer a slightly different view of interface development, allowing you to create them much easier and faster using not only the classic DOM, but also any graphical library as a renderer, such as Three.js, sprite.js, OGL, etc.
 
 # Philosophy and Zen of <b style="color:#42a425">ui.js</b>
 
 - **Develop faster**. No dev server, no bundler, no toolchain, no bootstrap template. Starts up in 0 ms 🔥
 - Declare new components right inside HTML. Try any ideas right now! 🤘
 - No need for any other dependencies for building UI
-- Use blazing fast virtual DOM over native Web Components
-- True reactive 2-ways state exchange between components
+- Use blazing fast memoized DOM over native Web Components
+- True reactive 2-ways state exchange between components with low overhead
 - Concise syntax as close to HTML/CSS/JavaScript as possible
 - Less superfluous language constructions to solve common tasks
 - Unleash the power of WASM in JavaScript manner
@@ -35,7 +33,7 @@ Take a look at two simple examples and what can be implemented with a minimum of
 
 ## To Do list in 10 LOC
 
-<to-do></to-do>
+
 
 ```html
 <!DOCTYPE html>
@@ -60,15 +58,13 @@ Take a look at two simple examples and what can be implemented with a minimum of
 </body>
 </html>
 ```
+<to-do-example></to-do-example>
+
 
 ## D3.js-like <b style="color:#42a425">Enter/Exit/Update</b> pattern and Virtual DOM together
 
 
 Modern state-of-art user interfaces are always animated. So why shouldn't state transitions be first-class citizens?
-
-<my-letters></my-letters>
-
-
 
 ```html
 <!DOCTYPE html>
@@ -128,6 +124,7 @@ Modern state-of-art user interfaces are always animated. So why shouldn't state 
 </body>
 </html>
 ```
+<letters-example></letters-example>
 
 
 
@@ -140,7 +137,7 @@ Modern state-of-art user interfaces are always animated. So why shouldn't state 
 
 **Please <b style="color:red">be careful</b> if you're using this project in production**. Is still in development, it might have bugs and breaking changes.
 
-**ui.js** v0.6.50 pre-alpha
+**ui.js** v0.7.2 pre-alpha
 
 - [ui.js](../dist/ui.js) - IIFE (Default)
 - [ui.esm.js](../dist/ui.esm.js) - ES module
@@ -939,11 +936,13 @@ Special thanks to these wonderful projects
 
 - [d3.js](https://github.com/d3/d3)
 - [walt](https://github.com/ballercat/walt)
+- [Riot](https://riot.js.org)
 - [Mikado](https://github.com/nextapps-de/mikado)
 - [Peeler](https://github.com/elzup/peeler)
 - [min.css](https://github.com/w3core/min.css)
 - [TinyAnimate](https://github.com/branneman/TinyAnimate)
 - [nanoid](https://github.com/ai/nanoid)
+- [spring](https://github.com/tommhuth/spring/tree/main)
 
 ## Licence
 
