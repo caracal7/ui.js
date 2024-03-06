@@ -27,6 +27,15 @@ nav a, footer, footer a {
     color: white;
 }
 
+@media only screen and (max-width: 500px) {
+    nav {
+        left: 30px;
+    }
+    a {
+        display: block;
+    }
+}
+
 footer {
     z-index: 1000;
     position:absolute;
@@ -34,4 +43,5 @@ footer {
     right: 50px;
     font-style: italic;
     opacity: 0.5;
+    padding-left: 10px;
 }
