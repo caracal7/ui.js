@@ -137,7 +137,7 @@ Modern state-of-art user interfaces are always animated. So why shouldn't state 
 
 **Please <b style="color:red">be careful</b> if you're using this project in production**. Is still in development, it might have bugs and breaking changes.
 
-**ui.js** v0.7.2 pre-alpha
+**ui.js** v0.7.3 pre-alpha
 
 - [ui.js](../dist/ui.js) - IIFE (Default)
 - [ui.esm.js](../dist/ui.esm.js) - ES module

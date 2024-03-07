@@ -645,8 +645,10 @@
       }
     }
     update(from);
-    var start = window.performance && window.performance.now ? window.performance.now() : +/* @__PURE__ */ new Date();
-    rAF(loop);
+    if (change) {
+      var start = window.performance && window.performance.now ? window.performance.now() : +/* @__PURE__ */ new Date();
+      rAF(loop);
+    }
     return {
       update: function(_from, _to, _easing) {
         start = window.performance && window.performance.now ? window.performance.now() : +/* @__PURE__ */ new Date();
@@ -8146,7 +8148,7 @@ Parse Error: ${e.stack}`);
   }
 
   // src/index.js
-  var VERSION = "0.7.2-dev";
+  var VERSION = "0.7.3-dev";
   !VERSION.endsWith("-dev") && console.log(`ui.js \u2764\uFE0F ${VERSION} alpha experiment. Make user interfaces great again!`);
   var UIjs = {
     VERSION,
