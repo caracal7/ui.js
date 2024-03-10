@@ -105,11 +105,7 @@
     }
 
     connected() {
-        console.log('connected')
-
         this.reset();
-
-                console.log(this.state)
     }
 
 
