@@ -2,7 +2,12 @@
 Modern, concise, developer-friendly &amp; zero-config DSL for creating user interfaces.
 
 
+![Demo](screenshot.png)
+
+[Demo](https://ui.js.org)
+
 ![Virtual DOM and d3.js like ENTER/EXIT/UPDATE pattern together](letters.gif)
+
 
 
 # Philosophy and Zen of <b style="color:#42a425">ui.js</b>
@@ -19,5 +24,3 @@ Modern, concise, developer-friendly &amp; zero-config DSL for creating user inte
 **ui.js** aims to provide a tool for development and application architecture out of the box.
 
 It empowers an effortless creation of highly scalable and easily maintainable applications without Babel transpiler, Parcel, Webpack and any complicated toolchain.
-
-[Try](https://ui.js.org)
