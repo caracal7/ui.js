@@ -1,6 +1,6 @@
 {
   "name": "@ui.js.org/ui",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Modern, concise, developer-friendly & zero-config DSL for creating user interfaces.",
   "main": "dist/ui.cjs.js",
   "module": "dist/ui.esm.js",
@@ -25,5 +25,5 @@
   "bugs": {
     "url": "https://github.com/caracal7/ui.js/issues"
   },
-  "homepage": "https://github.com/caracal7/ui.js#readme"
+  "homepage": "https://ui.js.org"
 }
