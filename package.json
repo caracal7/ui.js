@@ -6,7 +6,7 @@
     "start": "./node_modules/.bin/browser-sync start -s -w --directory --startPath ./index.html"
   },
   "keywords": [
-    "i.js",
+    "ui.js",
     "UI",
     "nano",
     "tiny",
