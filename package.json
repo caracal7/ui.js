@@ -1,6 +1,6 @@
 {
   "name": "@ui.js.org/ui",
-  "version": "0.7.11",
+  "version": "0.7.12",
   "description": "Modern, concise, developer-friendly & zero-config DSL for creating user interfaces.",
   "main": "dist/ui.cjs.js",
   "module": "dist/ui.esm.js",
