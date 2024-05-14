@@ -127,6 +127,7 @@
         this.state.width  = width  + 'px';
         this.state.height = height + 'px';
         this.render();
+        window.dispatchEvent(new Event('resize'));
     }
 
     moveWindow(dx, dy) {
