@@ -1,6 +1,6 @@
 {
   "name": "ui.js",
-  "version": "0.6.48",
+  "version": "0.7.14",
   "description": "Modern, concise, developer-friendly & zero-config DSL for creating user interfaces",
   "scripts": {
     "start": "./node_modules/.bin/browser-sync start -s -w --directory --startPath ./index.html"
