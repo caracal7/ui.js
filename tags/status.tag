@@ -1,5 +1,6 @@
 <!tag @fly fly.tag>
 <!tag @state state.tag>
+<!tag @abandoned abandoned.tag>
 <!css button.css>
 
 <aside
@@ -22,6 +23,10 @@
 
 <main>
 	<header>
+        <div></div>
+
+        <@abandoned x='Abandoned 😈'/>
+
         <h1>Misson</h1>
 
         Reduce <a href="https://en.wikipedia.org/wiki/Time_to_market">time-to-market</a> for new applications by using a simple and unified architecture for the most common visualisation tasks
@@ -235,21 +240,8 @@
             <li>Farm game starter with AI</li>
         </ul>
 
-        <h1>Risks and challenges</h1>
 
-        <p text(`
-As with all software projects, we're exploring new territory.
-There may be unexpected hard problems along the way. And often we have a rough idea of how much work it's going to take.
-        `)/>
-        <p text(`
-But... We have come a long way. And there is a clear understanding of how to solve most of the challenges.
-In fact, the main work at the moment is refactoring the core part of the framework.
-Also, all the parts related to the ecosystem have already been implemented by our team using various similar frameworks.
-A lot of things just need to be ported.
 
-This significantly reduces the risks. 😺
-
-        `)/>
 
 
 
